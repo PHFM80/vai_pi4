@@ -1,0 +1,18 @@
+# Entorno virtual
+vai_pi4/
+
+# Archivos compilados de Python
+__pycache__/
+*.py[cod]
+
+# Configuración de VSCode
+.vscode/
+
+# Archivos temporales
+*.log
+*.sqlite3
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
