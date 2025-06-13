@@ -1,0 +1,26 @@
+vai_pi4
+|
+|--app
+|   |
+|   |-__init.py__
+|   |-config_reader.py
+|   |-config.yaml
+|   |-database.py
+|
+|--models 
+|   |
+|   |-actuadores.py 
+|   |-sensores.py
+|
+|--plc 
+|   |
+|   |-collector_actuadores.py 
+|   |-collector_sensores.py
+|   |-connection.py 
+|   
+|--vai_pi4 (entorno virtual)
+|
+|-.gitignore
+|-pyvenv.cfg
+|-main.py 
+|-requeriments.txt 

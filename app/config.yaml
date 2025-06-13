@@ -1,0 +1,27 @@
+#config.yaml
+controlador:
+  id: 1
+  ip: "192.168.0.1"
+  sensores:
+    - id: 1
+      nombre: "mod 1"
+      vm: 0
+      parametro_minimo: 4
+      parametro_maximo: 8
+    - id: 2
+      nombre: "mod 2"
+      vm: 2
+      parametro_minimo: 2
+      parametro_maximo: 6
+  actuadores:
+    - id: 1
+      nombre: "LUZ VERDE"
+      marca_arranque: "M8"
+      nq_estado: "VB1.0"
+
+raspberry:
+  ip_eth: "192.168.0.31"
+  ip_wlan: "192.168.1.31"
+  ip_wireguard: "10.0.0.1"
+  ip_router: "192.168.1.1"
+
