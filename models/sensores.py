@@ -1,14 +1,15 @@
-#sensores.py
-from sqlalchemy import Column, Integer, Float, Date, Time
-from sqlalchemy.ext.declarative import declarative_base
+#D:\vai_pi4\models\sensores.py
+from sqlalchemy import Column, Integer, String, Date, Time
+from app.database import Base  # importar Base desde database.py
 
-Base = declarative_base()
-
-class SensorLectura(Base):
-    __tablename__ = 'sensor_lecturas'
+class EventoActuador(Base):
+    __tablename__ = 'evento_actuador'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    id_sensor = Column(Integer, nullable=False)
-    valor = Column(Float, nullable=False)
+    accion = Column(String(50), nullable=False)
     fecha = Column(Date, nullable=False)
     hora = Column(Time, nullable=False)
+    actuador = Column(Integer, nullable=False)
+    origen_evento = Column(String(20), nullable=False, default='plc')
+    usuario = Column(Integer, nullable=True)
+    controlador = Column(Integer, nullable=True)

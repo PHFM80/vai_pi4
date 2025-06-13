@@ -1,4 +1,4 @@
-#actuadores.py
+# D:\vai_pi4\models\actuadores.py
 from sqlalchemy import Column, Integer, String, Date, Time
 from sqlalchemy.ext.declarative import declarative_base
 
