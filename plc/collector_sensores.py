@@ -55,3 +55,6 @@ async def run():
         await asyncio.to_thread(conexion.desconectar)
         session.close()
 
+if __name__ == "__main__":
+    print("[DEBUG] Ejecutando collector_sensores de forma independiente...")
+    asyncio.run(run())

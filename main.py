@@ -8,7 +8,9 @@ app = FastAPI()
 
 @app.on_event("startup")
 async def startup_event():
+    print("[DEBUG] Lanzando collector_sensores...")
     asyncio.create_task(run_sensores())
+    print("[DEBUG] Lanzando collector_actuadores...")
     asyncio.create_task(run_actuadores())
 
 @app.get("/")
