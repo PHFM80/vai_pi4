@@ -9,10 +9,15 @@ from plc.connection import LOGOConnection
 
 def leer_bit_vm_sync(client, direccion_vm_bit: str) -> int | None:
     try:
-        if not (direccion_vm_bit.startswith("VB")or direccion_vm_bit.startswith("VRB")):
+        if not (direccion_vm_bit.startswith("VB") or direccion_vm_bit.startswith("VRB")):
             print(f"[ERROR] Dirección VM inválida: {direccion_vm_bit}")
             return None
-        byte_str, bit_str = direccion_vm_bit[2:].split(".")
+
+        if direccion_vm_bit.startswith("VRB"):
+            byte_str, bit_str = direccion_vm_bit[3:].split(".")
+        else:
+            byte_str, bit_str = direccion_vm_bit[2:].split(".")
+
         byte_index = int(byte_str)
         bit_index = int(bit_str)
 
@@ -20,9 +25,11 @@ def leer_bit_vm_sync(client, direccion_vm_bit: str) -> int | None:
         byte_val = data[0]
         bit_val = (byte_val >> bit_index) & 1
         return bit_val
+
     except Exception as e:
         print(f"[ERROR] Fallo al leer bit VM {direccion_vm_bit}: {e}")
         return None
+
 
 async def run():
     config = cargar_configuracion()
