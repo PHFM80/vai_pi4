@@ -9,7 +9,7 @@ from plc.connection import LOGOConnection
 
 def leer_bit_vm_sync(client, direccion_vm_bit: str) -> int | None:
     try:
-        if not direccion_vm_bit.startswith("VB"):
+        if not (direccion_vm_bit.startswith("VB")or direccion_vm_bit.startswith("VRB")):
             print(f"[ERROR] Dirección VM inválida: {direccion_vm_bit}")
             return None
         byte_str, bit_str = direccion_vm_bit[2:].split(".")
