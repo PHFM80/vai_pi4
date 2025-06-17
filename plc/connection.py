@@ -4,11 +4,11 @@ from snap7.logo import Logo
 class LOGOConnection:
     def __init__(self, ip: str):
         self.ip = ip
-        self.client = Logo(self.ip)  # Crear instancia sin parámetros
-
+        self.client = Logo()  # Crear instancia sin IP
 
     def conectar(self) -> None:
         try:
+            self.client.connect(self.ip, 0, 0)  # Conectar con IP, rack=0, slot=0
             if self.client.get_connected():
                 print(f"Conectado a PLC en {self.ip}")
             else:
@@ -22,5 +22,6 @@ class LOGOConnection:
             print(f"Desconectado de PLC en {self.ip}")
         except Exception as e:
             print(f"[ERROR] Fallo al desconectar del PLC {self.ip}: {e}")
+
 
 
