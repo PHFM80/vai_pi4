@@ -13,6 +13,7 @@ def leer_bit_vm_sync(client, direccion_vm_bit: str) -> int | None:
             print(f"[ERROR] Dirección VM inválida: {direccion_vm_bit}")
             return None
 
+        # Separar byte y bit
         if direccion_vm_bit.startswith("VRB"):
             byte_str, bit_str = direccion_vm_bit[3:].split(".")
         else:
@@ -21,7 +22,8 @@ def leer_bit_vm_sync(client, direccion_vm_bit: str) -> int | None:
         byte_index = int(byte_str)
         bit_index = int(bit_str)
 
-        data = client.db_read(1, byte_index, 1)
+        # Leer desde el área VM (0x84) en el LOGO!
+        data = client.read_area(0x84, 0, byte_index, 1)
         byte_val = data[0]
         bit_val = (byte_val >> bit_index) & 1
         return bit_val
