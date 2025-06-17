@@ -6,7 +6,10 @@ from plc.collector_actuadores import run as run_actuadores
 from app.database import init_db  
 from api.visualizacion_sensores_bd_api import router as sensores_router
 from api.visualizacion_actuadores_bd_api import router as actuadores_router
+from scheduler.scheduler import iniciar_scheduler  
 
+
+app = FastAPI()
 
 app = FastAPI()
 
@@ -18,6 +21,8 @@ async def startup_event():
     asyncio.create_task(run_sensores())
     print("[DEBUG] Lanzando collector_actuadores...")
     asyncio.create_task(run_actuadores())
+    print("[DEBUG] Iniciando scheduler...")
+    iniciar_scheduler()  
 
 app.include_router(sensores_router)
 app.include_router(actuadores_router)

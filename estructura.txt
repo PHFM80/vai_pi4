@@ -11,6 +11,12 @@ vai_pi4
 |   |
 |   |-pi_api.py 
 |
+|--scheduler/
+|   |
+|   |-scheduler.py 
+|   |-envio_datos_sensores.py 
+|   |-envio_datos_actuadores.py 
+|
 |--models/ 
 |   |
 |   |-actuadores.py 

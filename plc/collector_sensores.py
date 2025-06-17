@@ -48,7 +48,7 @@ async def run():
                     session.add(lectura)
                     await asyncio.to_thread(session.commit)
                     print(f"[{ahora.strftime('%H:%M:%S')}] Sensor {sensor.nombre}: {valor}")
-            await asyncio.sleep(10)
+            await asyncio.sleep(30)
     except asyncio.CancelledError:
         print("[INFO] Finalizando collector_sensores.")
     finally:
