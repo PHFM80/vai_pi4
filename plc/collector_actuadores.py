@@ -7,6 +7,8 @@ from models.actuadores import EventoActuador
 from app.config_reader import cargar_configuracion
 from plc.connection import LOGOConnection
 
+from snap7 import Area
+
 def leer_bit_vm_sync(client, direccion_vm_bit: str) -> int | None:
     try:
         if not (direccion_vm_bit.startswith("VB") or direccion_vm_bit.startswith("VRB")):
@@ -22,10 +24,9 @@ def leer_bit_vm_sync(client, direccion_vm_bit: str) -> int | None:
         bit_index = int(bit_str)
         print(f"[DEBUG] leyendo VM en byte {byte_index}, bit {bit_index}")
 
-        data = client.read_area(0x84, 0, byte_index, 1)
+        data = client.read_area(Area.VM, 0, byte_index, 1)
         print(f"[DEBUG] Tipo de data: {type(data)}, contenido: {data}")
 
-        # Intento convertir data a bytes para evitar problemas
         if not isinstance(data, (bytes, bytearray)):
             data = bytes(data)
 
@@ -36,6 +37,7 @@ def leer_bit_vm_sync(client, direccion_vm_bit: str) -> int | None:
     except Exception as e:
         print(f"[ERROR] Fallo al leer bit VM {direccion_vm_bit}: {e}")
         return None
+
 
 
 async def run():
