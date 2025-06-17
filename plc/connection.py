@@ -1,14 +1,14 @@
 #connection.py
-from snap7.logo import Logo
+import snap7
 
 class LOGOConnection:
     def __init__(self, ip: str):
         self.ip = ip
-        self.client = Logo()
+        self.client = snap7.client.Client()
 
-    def conectar(self):
+    def conectar(self) -> None:
         try:
-            self.client.connect(self.ip)  # Solo IP, sin rack ni slot
+            self.client.connect(self.ip, 0, 0)
             if self.client.get_connected():
                 print(f"Conectado a PLC en {self.ip}")
             else:
@@ -16,11 +16,10 @@ class LOGOConnection:
         except Exception as e:
             print(f"[ERROR] Fallo conexión al PLC {self.ip}: {e}")
 
-    def desconectar(self):
+    def desconectar(self) -> None:
         try:
             self.client.disconnect()
             print(f"Desconectado de PLC en {self.ip}")
         except Exception as e:
             print(f"[ERROR] Fallo al desconectar del PLC {self.ip}: {e}")
-
 
