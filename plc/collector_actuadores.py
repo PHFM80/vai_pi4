@@ -9,14 +9,20 @@ from plc.connection import LOGOConnection
 
 from snap7 import Area
 
+from snap7.common import Area
+
 def leer_bit_vm_sync(client, direccion_vm_bit: str) -> int | None:
     try:
-        if not (direccion_vm_bit.startswith("VB") or direccion_vm_bit.startswith("VRB")):
+        if not (direccion_vm_bit.startswith("VB") or 
+                direccion_vm_bit.startswith("VRB") or 
+                direccion_vm_bit.startswith("VR")):
             print(f"[ERROR] Dirección VM inválida: {direccion_vm_bit}")
             return None
 
         if direccion_vm_bit.startswith("VRB"):
             byte_str, bit_str = direccion_vm_bit[3:].split(".")
+        elif direccion_vm_bit.startswith("VR"):
+            byte_str, bit_str = direccion_vm_bit[2:].split(".")
         else:
             byte_str, bit_str = direccion_vm_bit[2:].split(".")
 
@@ -35,8 +41,9 @@ def leer_bit_vm_sync(client, direccion_vm_bit: str) -> int | None:
         return bit_val
 
     except Exception as e:
-        print(f"[ERROR] Fallo al leer bit VM {direccion_vm_bit}: {e}")
+        print(f"[ERROR] Fallo al leer bit VM {direccion_vm_bit}: {repr(e)}")
         return None
+
 
 
 
