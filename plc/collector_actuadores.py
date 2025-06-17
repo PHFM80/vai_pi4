@@ -28,7 +28,8 @@ def leer_bit_vm_sync(client, direccion_vm_bit: str) -> int | None:
         bit_index = int(bit_str)
         print(f"[DEBUG] leyendo VM en byte {byte_index}, bit {bit_index}")
 
-        data = client.read_area(Area.VM, 0, byte_index, 1)
+        data = client.read_area(0x84, 0, byte_index, 1)
+
         print(f"[DEBUG] Tipo de data: {type(data)}, contenido: {data}")
 
         if not isinstance(data, (bytes, bytearray)):
