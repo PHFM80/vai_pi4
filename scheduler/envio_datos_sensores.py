@@ -31,7 +31,7 @@ def obtener_lecturas_sin_enviar(db: Session):
 
 
 # URL del servidor central (modo desarrollo: notebook)
-URL_SERVIDOR = "http://192.168.1.33:8080/datos-sensor-create/"  # Reemplazar IP si cambia
+URL_SERVIDOR = "http://192.168.1.33:8000/datos-sensor-create/"  # Reemplazar IP si cambia
 
 logger = logging.getLogger(__name__)
 
