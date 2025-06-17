@@ -4,7 +4,8 @@ from snap7.logo import Logo
 class LOGOConnection:
     def __init__(self, ip: str):
         self.ip = ip
-        self.client = Logo(self.ip)  # Se conecta al instanciar
+        self.client = Logo()  # Crear instancia sin parámetros
+        self.client.connect(self.ip, 0, 0)  # rack=0, slot=0
 
     def conectar(self) -> None:
         try:
