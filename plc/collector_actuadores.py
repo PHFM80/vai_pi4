@@ -8,6 +8,9 @@ from app.config_reader import cargar_configuracion
 from plc.connection import LOGOConnection
 
 
+from snap7.util import get_bool
+import snap7
+
 
 def leer_bit_vm_sync(client, direccion_vm_bit: str) -> int | None:
     try:
@@ -21,7 +24,9 @@ def leer_bit_vm_sync(client, direccion_vm_bit: str) -> int | None:
 
         print(f"[DEBUG] leyendo VM en byte {byte_index}, bit {bit_index}")
 
-        valor = client.read_mem(byte_index, 1)  # tipo=1: leer bool
+        data = client.read_area(snap7.type.Areas['MK'], 0, byte_index, 1)
+        valor = get_bool(data, 0, bit_index)
+
         print(f"[DEBUG] Valor leído: {valor}")
         return int(valor)
 
