@@ -1,24 +1,28 @@
 vai_pi4
 |
-|--app
+|--app/
 |   |
 |   |-__init.py__
 |   |-config_reader.py
 |   |-config.yaml
 |   |-database.py
 |
-|--models 
+|--api/
+|   |
+|   |-pi_api.py 
+|
+|--models/ 
 |   |
 |   |-actuadores.py 
 |   |-sensores.py
 |
-|--plc 
+|--plc/ 
 |   |
 |   |-collector_actuadores.py 
 |   |-collector_sensores.py
 |   |-connection.py 
 |   
-|--vai_pi4 (entorno virtual)
+|--vai_pi4/ (entorno virtual)
 |
 |-.gitignore
 |-pyvenv.cfg
