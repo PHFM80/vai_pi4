@@ -12,7 +12,6 @@ from snap7.util import get_bool
 import snap7
 
 
-
 def leer_bit_vm_sync(client, direccion_vm_bit: str) -> int | None:
     try:
         if not direccion_vm_bit.startswith("VRB"):
@@ -23,22 +22,12 @@ def leer_bit_vm_sync(client, direccion_vm_bit: str) -> int | None:
         byte_index = int(byte_str)
         bit_index = int(bit_str)
 
-        # Leer y mostrar el bit solicitado
+        print(f"[DEBUG] leyendo VM en byte {byte_index}, bit {bit_index}")
+
         data = client.read_area(snap7.type.Areas['MK'], 0, byte_index, 1)
         valor = get_bool(data, 0, bit_index)
 
-        # Siempre imprimir los primeros 5 bytes bit a bit
-        data_5_bytes = client.read_area(snap7.type.Areas['MK'], 0, 0, 5)
-        print("[INFO] Estado de los primeros 5 bytes de VRB:")
-        for b in range(5):
-            for bit in range(8):
-                bit_val = get_bool(data_5_bytes, b, bit)
-                print(f"VRB{b}.{bit} = {int(bit_val)}", end=" | ")
-            print()
-
-        print(f"[DEBUG] leyendo VM en byte {byte_index}, bit {bit_index}")
         print(f"[DEBUG] Valor leído: {valor}")
-
         return int(valor)
 
     except Exception as e:
