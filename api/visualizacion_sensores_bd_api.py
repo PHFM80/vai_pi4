@@ -1,13 +1,11 @@
-# vai_pi4/api/visualizacion_sensores_bd_api.py
-
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
+from typing import Optional
 from app.database import SessionLocal
 from models.sensores import SensorLectura
 
 router = APIRouter()
 
-# Dependencia para obtener sesión de base de datos
 def get_db():
     db = SessionLocal()
     try:
@@ -16,6 +14,9 @@ def get_db():
         db.close()
 
 @router.get("/datos/sensores")
-def obtener_datos_sensores(db: Session = Depends(get_db)):
-    datos = db.query(SensorLectura).order_by(SensorLectura.fecha.desc(), SensorLectura.hora.desc()).all()
+def obtener_datos_sensores(id_sensor: Optional[int] = Query(None), db: Session = Depends(get_db)):
+    query = db.query(SensorLectura)
+    if id_sensor is not None:
+        query = query.filter(SensorLectura.id_sensor == id_sensor)
+    datos = query.order_by(SensorLectura.fecha.desc(), SensorLectura.hora.desc()).all()
     return datos

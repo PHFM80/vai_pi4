@@ -1,7 +1,6 @@
-# vai_pi4/api/visualizacion_actuadores_bd_api.py
-
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
+from typing import Optional
 from app.database import SessionLocal
 from models.actuadores import EventoActuador
 
@@ -15,6 +14,9 @@ def get_db():
         db.close()
 
 @router.get("/datos/actuadores")
-def obtener_datos_actuadores(db: Session = Depends(get_db)):
-    eventos = db.query(EventoActuador).order_by(EventoActuador.fecha.desc(), EventoActuador.hora.desc()).all()
+def obtener_datos_actuadores(id_actuador: Optional[int] = Query(None), db: Session = Depends(get_db)):
+    query = db.query(EventoActuador)
+    if id_actuador is not None:
+        query = query.filter(EventoActuador.actuador == id_actuador)
+    eventos = query.order_by(EventoActuador.fecha.desc(), EventoActuador.hora.desc()).all()
     return eventos
