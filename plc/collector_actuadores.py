@@ -18,12 +18,14 @@ def leer_bit_vm_sync(client, direccion_vm_bit: str) -> int | None:
             byte_str, bit_str = direccion_vm_bit[3:].split(".")
         else:
             byte_str, bit_str = direccion_vm_bit[2:].split(".")
-
+        
         byte_index = int(byte_str)
         bit_index = int(bit_str)
+        print(f"[DEBUG] leyendo VM en byte {byte_index}, bit {bit_index}")
 
         # Leer desde el área VM (0x84) en el LOGO!
         data = client.read_area(0x84, 0, byte_index, 1)
+        print(f"[DEBUG] read_area devuelve: {data} (tipo: {type(data)})")
         byte_val = data[0]
         bit_val = (byte_val >> bit_index) & 1
         return bit_val
