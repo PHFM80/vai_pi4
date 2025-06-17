@@ -9,8 +9,6 @@ from plc.connection import LOGOConnection
 
 from snap7 import Area
 
-from snap7.common import Area
-
 def leer_bit_vm_sync(client, direccion_vm_bit: str) -> int | None:
     try:
         if not (direccion_vm_bit.startswith("VB") or 
