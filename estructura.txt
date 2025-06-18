@@ -1,0 +1,41 @@
+vai_pi4
+|
+|--api/
+|   |
+|   |-alerta_to_servidor.py 
+|   |-tiempo_real_api.py
+|   |-visualizacion_actuadores_bd_api.py 
+|   |-visualizacion_sensores_bd_api.py
+|
+|--app/
+|   |
+|   |-__init.py__
+|   |-config_reader.py
+|   |-config.yaml
+|   |-database.py
+|   |-vrb_scanner.py 
+|
+|--models/ 
+|   |
+|   |-actuadores.py 
+|   |-sensores.py
+|
+|--plc/ 
+|   |
+|   |-collector_actuadores.py 
+|   |-collector_sensores.py
+|   |-connection.py 
+|  
+|--scheduler/
+|   |
+|   |-scheduler.py 
+|   |-envio_datos_sensores.py 
+|   |-envio_datos_actuadores.py 
+|
+|--vai_pi4/ (entorno virtual)
+|
+|-.gitignore
+|-datos.db 
+|-estructura.txt 
+|-main.py 
+|-requirements.txt 
