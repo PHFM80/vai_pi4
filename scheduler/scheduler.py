@@ -11,7 +11,7 @@ scheduler = BackgroundScheduler()
 logger = logging.getLogger(__name__)
 
 def iniciar_scheduler():
-    minutes = 5
+    minutes = 3
     scheduler.add_job(
         def_envio_datos_sensores,
         trigger=IntervalTrigger(minutes=minutes),
