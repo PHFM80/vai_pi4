@@ -26,6 +26,7 @@ def obtener_lecturas_sin_enviar(db: Session):
         })
 
         ids_a_borrar.append(lectura.id)
+    print(f"[DEBUG] ids_a_borrar, en la funcion lectura: {ids_a_borrar}")
 
     return payload, ids_a_borrar
 
@@ -41,6 +42,7 @@ def def_envio_datos_sensores():
 
     try:
         payload, ids_a_borrar = obtener_lecturas_sin_enviar(session)
+        print(f"[DEBUG] ids_a_borrar en la funcion envio: {ids_a_borrar}")
 
         if not payload:
             logger.info("No hay datos nuevos para enviar.")
@@ -54,16 +56,20 @@ def def_envio_datos_sensores():
             try:
                 response = requests.post(URL_SERVIDOR, json=payload, timeout=10)
                 if response.status_code == 200:
-                    logger.info(f"✅ Datos enviados correctamente. Respuesta: {response.json()}")
+                    logger.info(f"✅ Datos enviados correctamente. Respuesta recibida del servidor: {response.json()}")
 
                     # Eliminar lecturas enviadas
+                    print(f"[DEBUG] Borrando IDs: {ids_a_borrar}")
+
                     session.query(SensorLectura).filter(SensorLectura.id.in_(ids_a_borrar)).delete(synchronize_session=False)
                     session.commit()
+                    print("[DEBUG] Commit ejecutado tras borrar lecturas.")
+
                     logger.info(f"🗑️ Eliminadas {len(ids_a_borrar)} lecturas locales.")
                     exito = True
 
                 else:
-                    logger.warning(f"⚠️ Error al enviar datos. Código: {response.status_code}. Respuesta: {response.text}")
+                    logger.warning(f"⚠️ Error al enviar datos. Código: {response.status_code}. Respuesta recibida del servidor: {response.text}")
             except requests.RequestException as e:
                 logger.error(f"🌐 Fallo en la conexión: {e}")
                 time.sleep(5)  # espera antes de reintentar
