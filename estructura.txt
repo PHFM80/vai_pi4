@@ -1,21 +1,16 @@
 vai_pi4
 |
+|--api/
+|   |
+|   |-visualizacion_actuadores_bd_api.py 
+|   |-visualizacion_sensores_bd_api.py
+|
 |--app/
 |   |
 |   |-__init.py__
 |   |-config_reader.py
 |   |-config.yaml
 |   |-database.py
-|
-|--api/
-|   |
-|   |-pi_api.py 
-|
-|--scheduler/
-|   |
-|   |-scheduler.py 
-|   |-envio_datos_sensores.py 
-|   |-envio_datos_actuadores.py 
 |
 |--models/ 
 |   |
@@ -27,10 +22,17 @@ vai_pi4
 |   |-collector_actuadores.py 
 |   |-collector_sensores.py
 |   |-connection.py 
-|   
+|  
+|--scheduler/
+|   |
+|   |-scheduler.py 
+|   |-envio_datos_sensores.py 
+|   |-envio_datos_actuadores.py 
+|
 |--vai_pi4/ (entorno virtual)
 |
 |-.gitignore
-|-pyvenv.cfg
+|-datos.db 
+|-estructura.txt 
 |-main.py 
-|-requeriments.txt 
+|-requirements.txt 

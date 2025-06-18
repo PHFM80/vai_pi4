@@ -6,6 +6,7 @@ from app.database import engine
 from models.sensores import SensorLectura
 from app.config_reader import cargar_configuracion
 from plc.connection import LOGOConnection
+from api.alerta_to_servidor_api import alerta_desde_collector
 
 def leer_valor_vm_sync(client, direccion_vm):
     try:
@@ -32,7 +33,6 @@ async def run():
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    print("[INFO] Iniciando lectura de sensores...")
     try:
         while True:
             for sensor in sensores:
@@ -48,6 +48,12 @@ async def run():
                     session.add(lectura)
                     await asyncio.to_thread(session.commit)
                     print(f"[{ahora.strftime('%H:%M:%S')}] Sensor {sensor.nombre}: {valor}")
+                    if valor > sensor.parametro_maximo:
+                        print(f"[ALERTA] Valor fuera de rango detectado en {sensor.nombre}: {valor}")
+                        alerta_desde_collector(
+                            controlador_id=config.controlador.id,
+                            sensor_id=sensor.id,
+                            valor=valor)
             await asyncio.sleep(30)
     except asyncio.CancelledError:
         print("[INFO] Finalizando collector_sensores.")
@@ -56,5 +62,4 @@ async def run():
         session.close()
 
 if __name__ == "__main__":
-    print("[DEBUG] Ejecutando collector_sensores de forma independiente...")
     asyncio.run(run())

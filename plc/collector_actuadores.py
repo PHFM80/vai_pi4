@@ -15,14 +15,11 @@ import snap7
 def leer_bit_vm_sync(client, direccion_vm_bit: str) -> int | None:
     try:
         if not direccion_vm_bit.startswith("VRB"):
-            print(f"[ERROR] Dirección VM inválida: {direccion_vm_bit}")
             return None
 
         byte_str, bit_str = direccion_vm_bit[3:].split(".")
         byte_index = int(byte_str)
         bit_index = int(bit_str)
-
-        print(f"[DEBUG] leyendo VM en byte {byte_index}, bit {bit_index}")
 
         data = client.read_area(snap7.type.Areas['MK'], 0, byte_index, 1)
         valor = get_bool(data, 0, bit_index)

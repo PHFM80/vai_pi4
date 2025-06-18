@@ -30,8 +30,6 @@ def obtener_eventos_no_enviados(db: Session):
         })
 
         ids_a_borrar.append(evento.id)
-    print(f"[DEBUG] Eventos a enviar desde  obtener eventeos: {payload}")
-    print(f"[DEBUG] IDs a borrar desde obtener eventos: {ids_a_borrar}")
     return payload, ids_a_borrar
 
 
@@ -41,10 +39,8 @@ def def_envio_eventos_actuadores():
 
     try:
         payload, ids_a_borrar = obtener_eventos_no_enviados(session)
-
         if not payload["eventos"]:
             logger.info("No hay eventos nuevos para enviar.")
-            print("[DEBUG] No hay eventos nuevos para enviar.")
             return
 
         intentos = 0
@@ -55,13 +51,10 @@ def def_envio_eventos_actuadores():
             try:
                 response = requests.post(URL_SERVIDOR, json=payload, timeout=10)
                 if response.status_code == 200:
-                    print(f"[DEBUG] Respuesta del servidor: {response.json()}")
                     logger.info(f"✅ Eventos enviados correctamente. Respuesta del servidor: {response.json()}")
-
                     session.query(EventoActuador).filter(EventoActuador.id.in_(ids_a_borrar)).delete(synchronize_session=False)
                     session.commit()
                     logger.info(f"🗑️ Eliminados {len(ids_a_borrar)} eventos locales.")
-                    print(f"[DEBUG] Se eliminaron {len(ids_a_borrar)} eventos locales.")
                     exito = True
                 else:
                     logger.warning(f"⚠️ Error al enviar eventos. Código: {response.status_code}. Respuesta: {response.text}")

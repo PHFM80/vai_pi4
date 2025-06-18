@@ -6,13 +6,13 @@ controlador:
     - id: 1
       nombre: "mod 1"
       vm: 0
-      parametro_minimo: 4
-      parametro_maximo: 8
+      parametro_minimo: 400
+      parametro_maximo: 800
     - id: 2
       nombre: "mod 2"
       vm: 2
-      parametro_minimo: 2
-      parametro_maximo: 6
+      parametro_minimo: 200
+      parametro_maximo: 600
   actuadores:
     - id: 1
       nombre: "LUZ VERDE"

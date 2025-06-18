@@ -10,7 +10,6 @@ from app.database import SessionLocal
 
 def obtener_lecturas_sin_enviar(db: Session):
     lecturas = db.query(SensorLectura).all()
-
     payload = {}
     ids_a_borrar = []
 
@@ -26,8 +25,6 @@ def obtener_lecturas_sin_enviar(db: Session):
         })
 
         ids_a_borrar.append(lectura.id)
-    print(f"[DEBUG] ids_a_borrar, en la funcion lectura: {ids_a_borrar}")
-
     return payload, ids_a_borrar
 
 
@@ -42,8 +39,6 @@ def def_envio_datos_sensores():
 
     try:
         payload, ids_a_borrar = obtener_lecturas_sin_enviar(session)
-        print(f"[DEBUG] ids_a_borrar en la funcion envio: {ids_a_borrar}")
-
         if not payload:
             logger.info("No hay datos nuevos para enviar.")
             return
@@ -59,12 +54,8 @@ def def_envio_datos_sensores():
                     logger.info(f"✅ Datos enviados correctamente. Respuesta recibida del servidor: {response.json()}")
 
                     # Eliminar lecturas enviadas
-                    print(f"[DEBUG] Borrando IDs: {ids_a_borrar}")
-
                     session.query(SensorLectura).filter(SensorLectura.id.in_(ids_a_borrar)).delete(synchronize_session=False)
                     session.commit()
-                    print("[DEBUG] Commit ejecutado tras borrar lecturas.")
-
                     logger.info(f"🗑️ Eliminadas {len(ids_a_borrar)} lecturas locales.")
                     exito = True
 

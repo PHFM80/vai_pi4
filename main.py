@@ -15,13 +15,9 @@ app = FastAPI()
 
 @app.on_event("startup")
 async def startup_event():
-    print("[DEBUG] Inicializando base de datos...")
-    init_db()  # ← Esta línea crea las tablas si no existen
-    print("[DEBUG] Lanzando collector_sensores...")
+    init_db()  
     asyncio.create_task(run_sensores())
-    print("[DEBUG] Lanzando collector_actuadores...")
     asyncio.create_task(run_actuadores())
-    print("[DEBUG] Iniciando scheduler...")
     iniciar_scheduler()  
 
 app.include_router(sensores_router)
