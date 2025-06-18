@@ -18,11 +18,11 @@ async def startup_event():
     print("[DEBUG] Inicializando base de datos...")
     init_db()  # ← Esta línea crea las tablas si no existen
     print("[DEBUG] Lanzando collector_sensores...")
-    asyncio.create_task(run_sensores())
+    #asyncio.create_task(run_sensores())
     print("[DEBUG] Lanzando collector_actuadores...")
-    asyncio.create_task(run_actuadores())
+    #asyncio.create_task(run_actuadores())
     print("[DEBUG] Iniciando scheduler...")
-    iniciar_scheduler()  
+    #iniciar_scheduler()  
 
 app.include_router(sensores_router)
 app.include_router(actuadores_router)
