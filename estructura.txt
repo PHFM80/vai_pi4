@@ -2,6 +2,8 @@ vai_pi4
 |
 |--api/
 |   |
+|   |-alerta_to_servidor.py 
+|   |-tiempo_real_api.py
 |   |-visualizacion_actuadores_bd_api.py 
 |   |-visualizacion_sensores_bd_api.py
 |
@@ -11,6 +13,7 @@ vai_pi4
 |   |-config_reader.py
 |   |-config.yaml
 |   |-database.py
+|   |-vrb_scanner.py 
 |
 |--models/ 
 |   |

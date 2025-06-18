@@ -15,9 +15,7 @@ def alerta_desde_collector(controlador_id: int, sensor_id: int, valor: float):
         "sensor": sensor_id,
         "fecha": ahora.strftime("%Y-%m-%d"),
         "hora": ahora.strftime("%H:%M:%S"),
-        "valor": valor
-    }
-
+        "valor": valor    }
     try:
         response = requests.post(URL_ALERTA, json=payload, timeout=5)
         if response.status_code == 201:
