@@ -3,62 +3,41 @@ from fastapi import APIRouter, Request, HTTPException
 from plc.connection import LOGOConnection
 from app.config_reader import cargar_configuracion
 import asyncio
-'''
-router = APIRouter()
-
-@router.get("/leer-marca-pi4/")
-async def leer_marca_pi4(marca: str):
-    if not marca.startswith("M") or not marca[1:].isdigit():
-        raise HTTPException(status_code=400, detail="Formato de marca inválido. Usa por ejemplo 'M8'")
-
-    direccion = int(marca[1:])
-
-    config = cargar_configuracion()
-    conexion = LOGOConnection(str(config.controlador.ip))
-
-    try:
-        await asyncio.to_thread(conexion.conectar)
-        valor = await asyncio.to_thread(conexion.read_bool, "M", direccion)
-        await asyncio.to_thread(conexion.desconectar)
-        print(f"Estado leído de {marca}: {valor}")  # <-- Esto imprime en consola
-        return {"marca": marca, "valor": valor}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error al leer la marca: {e}")
-
-'''
 from snap7.type import Areas
 
 router = APIRouter()
-
-@router.get("/leer-marca-pi4/")
-async def leer_marca_pi4(marca: str, id_actuador: int = None):
-    if not marca.startswith("M") or not marca[1:].isdigit():
-        raise HTTPException(status_code=400, detail="Formato de marca inválido. Usa por ejemplo 'M8'")
-
-    direccion = int(marca[1:])  # Ej: "M8" → 8
-
+@router.get("/leer-marcas-pi4/")
+async def leer_marcas_pi4(id_actuador: int = None):
     config = cargar_configuracion()
     conexion = LOGOConnection(str(config.controlador.ip))
 
     try:
         await asyncio.to_thread(conexion.conectar)
 
-        # Leer byte de la marca
-        resultado = await asyncio.to_thread(conexion.client.read_area, Areas.MK, 0, direccion, 1)
-        byte = resultado[0]
-        bits = [(byte >> i) & 1 for i in range(8)]
+        todas_las_marcas = {}
 
-        print(f"[DEBUG] Byte leído de M{direccion}: {byte:08b}")
-        for i, bit in enumerate(bits):
-            print(f"M{direccion}.{i} = {bool(bit)}")
+        # Leer M1 a M7
+        for direccion in range(1, 8):
+            resultado = await asyncio.to_thread(conexion.client.read_area, Areas.MK, 0, direccion, 1)
+            byte = resultado[0]
+            bits = [(byte >> i) & 1 for i in range(8)]
+
+            print(f"[DEBUG] Byte leído de M{direccion}: {byte:08b}")
+            for i, bit in enumerate(bits):
+                nombre_bit = f"M{direccion}.{i}"
+                estado = bool(bit)
+                print(f"{nombre_bit} = {estado}")
+                todas_las_marcas[nombre_bit] = estado
 
         # Leer estado del actuador si se especificó
         estado_actuador = None
+        nombre_actuador = None
         if id_actuador is not None:
             actuadores = config.controlador.actuadores
             actuador = next((a for a in actuadores if a.id == id_actuador), None)
 
             if actuador:
+                nombre_actuador = actuador.nombre
                 vrb_str = actuador.nq_estado  # Ej: "VRB0.7"
                 if vrb_str.startswith("VRB"):
                     partes = vrb_str[3:].split(".")
@@ -67,17 +46,17 @@ async def leer_marca_pi4(marca: str, id_actuador: int = None):
                     resultado_vrb = await asyncio.to_thread(conexion.client.read_area, Areas.PE, 0, byte_vrb, 1)
                     byte_leido = resultado_vrb[0]
                     estado_actuador = bool((byte_leido >> bit_vrb) & 1)
-                    print(f"[DEBUG] Estado leído de {vrb_str}: {estado_actuador}")
+                    print(f"[DEBUG] Estado leído de {vrb_str} ({nombre_actuador}): {estado_actuador}")
                 else:
                     print(f"[WARN] nq_estado no válido: {vrb_str}")
 
         await asyncio.to_thread(conexion.desconectar)
 
         return {
-            "marca": f"M{direccion}",
-            "bits": {f"M{direccion}.{i}": bool(bit) for i, bit in enumerate(bits)},
-            "estado_actuador": estado_actuador
+            "marcas": todas_las_marcas,
+            "estado_actuador": estado_actuador,
+            "nombre_actuador": nombre_actuador
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error al leer la marca: {e}")
+        raise HTTPException(status_code=500, detail=f"Error al leer marcas: {e}")
