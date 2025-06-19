@@ -9,7 +9,7 @@ from api.visualizacion_actuadores_bd_api import router as actuadores_router
 from scheduler.scheduler import iniciar_scheduler  
 from api.tiempo_real_api import router as tiempo_real_router
 from api.accionar_actuador_pi4_api import router as actuador_router
-from api.leer_marca_m8_api import router as marca_router
+from api.leer_marca_m_api import router as marca_router
 
 
 
