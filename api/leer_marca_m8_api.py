@@ -20,7 +20,7 @@ async def leer_marca_pi4(marca: str):
         await asyncio.to_thread(conexion.conectar)
         valor = await asyncio.to_thread(conexion.read_bool, "M", direccion)
         await asyncio.to_thread(conexion.desconectar)
-
+        print(f"Estado leído de {marca}: {valor}")  # <-- Esto imprime en consola
         return {"marca": marca, "valor": valor}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al leer la marca: {e}")
