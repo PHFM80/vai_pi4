@@ -17,7 +17,7 @@ async def leer_marcas_pi4(id_actuador: int = None):
         todas_las_marcas = {}
 
         # Leer M1 a M7
-        for direccion in range(1, 8):
+        for direccion in range(0, 15):
             resultado = await asyncio.to_thread(conexion.client.read_area, Areas.MK, 0, direccion, 1)
             byte = resultado[0]
             bits = [(byte >> i) & 1 for i in range(8)]
