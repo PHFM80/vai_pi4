@@ -1,5 +1,6 @@
 #connection.py
 import snap7
+from snap7.type import Areas
 
 class LOGOConnection:
     def __init__(self, ip: str):
@@ -30,4 +31,17 @@ class LOGOConnection:
         except Exception as e:
             print(f"[ERROR] No se pudo escribir en {area}{address}: {e}")
             raise
+
+    def read_bool(self, area: str, direccion: int) -> bool:
+        """
+        Lee un valor booleano de una marca del LOGO.
+        Por ejemplo: area="M", direccion=8 (para M8)
+        """
+        try:
+            resultado = self.client.read_area(Areas.MK, 0, direccion, 1)
+            return bool(resultado[0])
+        except Exception as e:
+            print(f"[ERROR] Al leer marca {area}{direccion}: {e}")
+            return False
+
 
