@@ -13,8 +13,6 @@ from api.tiempo_real_api import router as tiempo_real_router
 
 app = FastAPI()
 
-app = FastAPI()
-
 @app.on_event("startup")
 async def startup_event():
     init_db()  

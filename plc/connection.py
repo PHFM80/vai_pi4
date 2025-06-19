@@ -23,3 +23,11 @@ class LOGOConnection:
         except Exception as e:
             print(f"[ERROR] Fallo al desconectar del PLC {self.ip}: {e}")
 
+    def write_bool(self, area: str, address: int, value: bool):
+        try:
+            byte = 1 if value else 0
+            self.client.write_area(snap7.type.Areas.MK, 0, address, bytes([byte]))
+        except Exception as e:
+            print(f"[ERROR] No se pudo escribir en {area}{address}: {e}")
+            raise
+

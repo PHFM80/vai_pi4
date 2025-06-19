@@ -14,3 +14,4 @@ class EventoActuador(Base):
     usuario = Column(Integer, nullable=True)
     controlador = Column(Integer, nullable=True)
 
+ 
