@@ -24,24 +24,23 @@ class LOGOConnection:
         except Exception as e:
             print(f"[ERROR] Fallo al desconectar del PLC {self.ip}: {e}")
 
-    def write_bool(self, area: str, address: int, value: bool):
-        try:
-            byte = 1 if value else 0
-            self.client.write_area(snap7.type.Areas.MK, 0, address, bytes([byte]))
-        except Exception as e:
-            print(f"[ERROR] No se pudo escribir en {area}{address}: {e}")
-            raise
-
-    def read_bool(self, area: str, direccion: int) -> bool:
-        """
-        Lee un valor booleano de una marca del LOGO.
-        Por ejemplo: area="M", direccion=8 (para M8)
-        """
+    def read_bool(self, area: str, direccion: int, bit: int = 0) -> bool:
         try:
             resultado = self.client.read_area(Areas.MK, 0, direccion, 1)
-            return bool(resultado[0])
+            byte = resultado[0]
+            return bool((byte >> bit) & 1)
         except Exception as e:
-            print(f"[ERROR] Al leer marca {area}{direccion}: {e}")
+            print(f"[ERROR] Al leer marca {area}{direccion} bit {bit}: {e}")
             return False
 
-
+    def write_bool(self, area: str, direccion: int, value: bool, bit: int = 0):
+        try:
+            byte_actual = self.client.read_area(Areas.MK, 0, direccion, 1)[0]
+            if value:
+                byte_modificado = byte_actual | (1 << bit)
+            else:
+                byte_modificado = byte_actual & ~(1 << bit)
+            self.client.write_area(Areas.MK, 0, direccion, bytes([byte_modificado]))
+        except Exception as e:
+            print(f"[ERROR] No se pudo escribir en {area}{direccion} bit {bit}: {e}")
+            raise
