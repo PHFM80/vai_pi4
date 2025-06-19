@@ -28,10 +28,11 @@ async def leer_marca_pi4(marca: str):
 '''
 from snap7.type import Areas
 
+
 router = APIRouter()
 
 @router.get("/leer-marca-pi4/")
-async def leer_marca_pi4(marca: str, id_actuador: int = None):
+async def leer_marca_pi4(marca: str):
     if not marca.startswith("M") or not marca[1:].isdigit():
         raise HTTPException(status_code=400, detail="Formato de marca inválido. Usa por ejemplo 'M8'")
 
@@ -42,42 +43,37 @@ async def leer_marca_pi4(marca: str, id_actuador: int = None):
 
     try:
         await asyncio.to_thread(conexion.conectar)
-
-        # Leer byte de la marca
         resultado = await asyncio.to_thread(conexion.client.read_area, Areas.MK, 0, direccion, 1)
+        await asyncio.to_thread(conexion.desconectar)
+
         byte = resultado[0]
         bits = [(byte >> i) & 1 for i in range(8)]
 
-        print(f"[DEBUG] Byte leído de M{direccion}: {byte:08b}")
+        print(f"[DEBUG] Byte leído de {marca}: {byte:08b}")
         for i, bit in enumerate(bits):
-            print(f"M{direccion}.{i} = {bool(bit)}")
+            print(f"{marca}.{i} = {bool(bit)}")
 
-        # Leer estado del actuador si se especificó
+        # Buscar actuador con esa marca_arranque
+        actuadores = config.controlador.actuadores
+        actuador = next((a for a in actuadores if a.marca_arranque.lower() == marca.lower()), None)
+
         estado_actuador = None
-        if id_actuador is not None:
-            actuadores = config.controlador.actuadores
-            actuador = next((a for a in actuadores if a.id == id_actuador), None)
+        nombre_actuador = None
+        if actuador:
+            nombre_actuador = actuador.nombre
+            # Asumo que estado ON si algún bit está en 1 (true), OFF si todos 0
+            estado_actuador = "ON" if any(bits) else "OFF"
 
-            if actuador:
-                vrb_str = actuador.nq_estado  # Ej: "VRB0.7"
-                if vrb_str.startswith("VRB"):
-                    partes = vrb_str[3:].split(".")
-                    byte_vrb = int(partes[0])
-                    bit_vrb = int(partes[1])
-                    resultado_vrb = await asyncio.to_thread(conexion.client.read_area, Areas.PE, 0, byte_vrb, 1)
-                    byte_leido = resultado_vrb[0]
-                    estado_actuador = bool((byte_leido >> bit_vrb) & 1)
-                    print(f"[DEBUG] Estado leído de {vrb_str}: {estado_actuador}")
-                else:
-                    print(f"[WARN] nq_estado no válido: {vrb_str}")
-
-        await asyncio.to_thread(conexion.desconectar)
-
-        return {
-            "marca": f"M{direccion}",
-            "bits": {f"M{direccion}.{i}": bool(bit) for i, bit in enumerate(bits)},
-            "estado_actuador": estado_actuador
+        respuesta = {
+            "marca": marca,
+            "bits": {f"{marca}.{i}": bool(bit) for i, bit in enumerate(bits)},
         }
+
+        if actuador:
+            respuesta["nombre_actuador"] = nombre_actuador
+            respuesta["estado_actuador"] = estado_actuador
+
+        return respuesta
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al leer la marca: {e}")

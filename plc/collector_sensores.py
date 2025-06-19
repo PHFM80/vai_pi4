@@ -49,7 +49,7 @@ async def run():
                     await asyncio.to_thread(session.commit)
                     print(f"[{ahora.strftime('%H:%M:%S')}] Sensor {sensor.nombre}: {valor}")
                     if valor > sensor.parametro_maximo:
-                        print(f"[ALERTA] Valor fuera de rango detectado en {sensor.nombre}: {valor}")
+                        #print(f"[ALERTA] Valor fuera de rango detectado en {sensor.nombre}: {valor}")
                         alerta_desde_collector(
                             controlador_id=config.controlador.id,
                             sensor_id=sensor.id,
