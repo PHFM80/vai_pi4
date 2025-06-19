@@ -21,7 +21,8 @@ def leer_bit_vm_sync(client, direccion_vm_bit: str) -> int | None:
         byte_index = int(byte_str)
         bit_index = int(bit_str)
 
-        data = client.read_area(snap7.type.Areas['MK'], 0, byte_index, 1)
+        data = client.read_area(snap7.type.Areas['PE'], 0, byte_index, 1)
+
         valor = get_bool(data, 0, bit_index)
         print(f"[DEBUG] Byte completo leído: {data[0]:08b}")
         print(f"[DEBUG] Bit VRB{byte_index}.{bit_index} leído: {valor}")
