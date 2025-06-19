@@ -16,7 +16,7 @@ controlador:
   actuadores:
     - id: 1
       nombre: "LUZ VERDE"
-      marca_arranque: "M8"
+      marca_arranque: "M1.0"
       nq_estado: "VRB0.7"
 
 raspberry:
