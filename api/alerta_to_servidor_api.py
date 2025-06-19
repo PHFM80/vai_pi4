@@ -24,4 +24,5 @@ def alerta_desde_collector(controlador_id: int, sensor_id: int, valor: float):
             pass
             #print(f"[ALERTA] Error al enviar alerta: {response.status_code} - {response.text}")
     except Exception as e:
-        logger.error(f"[ALERTA] Fallo en el envío de alerta: {e}")
+        pass
+        #logger.error(f"[ALERTA] Fallo en el envío de alerta: {e}")

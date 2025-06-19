@@ -17,7 +17,7 @@ controlador:
     - id: 1
       nombre: "LUZ VERDE"
       marca_arranque: "M8"
-      nq_estado: "VRB1.0"
+      nq_estado: "VRB0.7"
 
 raspberry:
   ip_eth: "192.168.0.31"

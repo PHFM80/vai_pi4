@@ -47,33 +47,16 @@ async def leer_marca_pi4(marca: str):
         await asyncio.to_thread(conexion.desconectar)
 
         byte = resultado[0]
-        bits = [(byte >> i) & 1 for i in range(8)]
-
+        bits = [(byte >> i) & 1 for i in range(8)]  
+        
         print(f"[DEBUG] Byte leído de {marca}: {byte:08b}")
         for i, bit in enumerate(bits):
             print(f"{marca}.{i} = {bool(bit)}")
 
-        # Buscar actuador con esa marca_arranque
-        actuadores = config.controlador.actuadores
-        actuador = next((a for a in actuadores if a.marca_arranque.lower() == marca.lower()), None)
-
-        estado_actuador = None
-        nombre_actuador = None
-        if actuador:
-            nombre_actuador = actuador.nombre
-            # Asumo que estado ON si algún bit está en 1 (true), OFF si todos 0
-            estado_actuador = "ON" if any(bits) else "OFF"
-
-        respuesta = {
+        return {
             "marca": marca,
-            "bits": {f"{marca}.{i}": bool(bit) for i, bit in enumerate(bits)},
+            "bits": {f"{marca}.{i}": bool(bit) for i, bit in enumerate(bits)}
         }
-
-        if actuador:
-            respuesta["nombre_actuador"] = nombre_actuador
-            respuesta["estado_actuador"] = estado_actuador
-
-        return respuesta
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al leer la marca: {e}")
