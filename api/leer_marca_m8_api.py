@@ -28,11 +28,10 @@ async def leer_marca_pi4(marca: str):
 '''
 from snap7.type import Areas
 
-
 router = APIRouter()
 
 @router.get("/leer-marca-pi4/")
-async def leer_marca_pi4(marca: str):
+async def leer_marca_pi4(marca: str, id_actuador: int = None):
     if not marca.startswith("M") or not marca[1:].isdigit():
         raise HTTPException(status_code=400, detail="Formato de marca inválido. Usa por ejemplo 'M8'")
 
@@ -43,19 +42,41 @@ async def leer_marca_pi4(marca: str):
 
     try:
         await asyncio.to_thread(conexion.conectar)
+
+        # Leer byte de la marca
         resultado = await asyncio.to_thread(conexion.client.read_area, Areas.MK, 0, direccion, 1)
+        byte = resultado[0]
+        bits = [(byte >> i) & 1 for i in range(8)]
+
+        print(f"[DEBUG] Byte leído de M{direccion}: {byte:08b}")
+        for i, bit in enumerate(bits):
+            print(f"M{direccion}.{i} = {bool(bit)}")
+
+        # Leer estado del actuador si se especificó
+        estado_actuador = None
+        if id_actuador is not None:
+            actuadores = config.controlador.actuadores
+            actuador = next((a for a in actuadores if a.id == id_actuador), None)
+
+            if actuador:
+                vrb_str = actuador.nq_estado  # Ej: "VRB0.7"
+                if vrb_str.startswith("VRB"):
+                    partes = vrb_str[3:].split(".")
+                    byte_vrb = int(partes[0])
+                    bit_vrb = int(partes[1])
+                    resultado_vrb = await asyncio.to_thread(conexion.client.read_area, Areas.PE, 0, byte_vrb, 1)
+                    byte_leido = resultado_vrb[0]
+                    estado_actuador = bool((byte_leido >> bit_vrb) & 1)
+                    print(f"[DEBUG] Estado leído de {vrb_str}: {estado_actuador}")
+                else:
+                    print(f"[WARN] nq_estado no válido: {vrb_str}")
+
         await asyncio.to_thread(conexion.desconectar)
 
-        byte = resultado[0]
-        bits = [(byte >> i) & 1 for i in range(8)]  
-        
-        print(f"[DEBUG] Byte leído de {marca}: {byte:08b}")
-        for i, bit in enumerate(bits):
-            print(f"{marca}.{i} = {bool(bit)}")
-
         return {
-            "marca": marca,
-            "bits": {f"{marca}.{i}": bool(bit) for i, bit in enumerate(bits)}
+            "marca": f"M{direccion}",
+            "bits": {f"M{direccion}.{i}": bool(bit) for i, bit in enumerate(bits)},
+            "estado_actuador": estado_actuador
         }
 
     except Exception as e:
