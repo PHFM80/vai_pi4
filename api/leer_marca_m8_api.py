@@ -26,6 +26,7 @@ async def leer_marca_pi4(marca: str):
         raise HTTPException(status_code=500, detail=f"Error al leer la marca: {e}")
 
 '''
+from snap7.type import Areas
 
 router = APIRouter()
 
@@ -41,7 +42,8 @@ async def leer_marca_pi4(marca: str):
 
     try:
         await asyncio.to_thread(conexion.conectar)
-        resultado = await asyncio.to_thread(conexion.client.read_area, 0x83, 0, direccion, 1)
+        resultado = await asyncio.to_thread(conexion.client.read_area, Areas.MK, 0, direccion, 1)
+
         await asyncio.to_thread(conexion.desconectar)
 
         byte = resultado[0]
