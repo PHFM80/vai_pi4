@@ -1,3 +1,4 @@
+
 #connection.py
 import snap7
 from snap7.type import Areas

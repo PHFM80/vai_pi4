@@ -23,16 +23,14 @@ def leer_bit_vm_sync(client, direccion_vm_bit: str) -> int | None:
 
         data = client.read_area(snap7.type.Areas['MK'], 0, byte_index, 1)
         valor = get_bool(data, 0, bit_index)
-
+        print(f"[DEBUG] Byte completo leído: {data[0]:08b}")
+        print(f"[DEBUG] Bit VRB{byte_index}.{bit_index} leído: {valor}")
         print(f"[DEBUG] Valor leído: {valor}")
         return int(valor)
 
     except Exception as e:
         print(f"[ERROR] Fallo al leer bit VM {direccion_vm_bit}: {e}")
         return None
-
-
-
 
 
 async def run():
@@ -78,3 +76,16 @@ async def run():
     finally:
         await asyncio.to_thread(conexion.desconectar)
         session.close()
+
+
+
+
+
+
+
+
+
+
+
+
+
