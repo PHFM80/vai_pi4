@@ -1,4 +1,5 @@
-# collector_actuadores
+# plc\collector_actuadores.py
+
 import asyncio
 from datetime import datetime
 from sqlalchemy.orm import sessionmaker
@@ -6,34 +7,22 @@ from app.database import engine
 from models.actuadores import EventoActuador
 from app.config_reader import cargar_configuracion
 from plc.connection import LOGOConnection
-from snap7.util import get_bool
 import snap7
 
 
-def leer_estado_sync(client, direccion_m_bit: str) -> int | None:
+def leer_bit(client, byte_dir: int, bit_dir: int) -> int | None:
     try:
-        if not direccion_m_bit.startswith("M"):
-            return None
-
-        import re
-        m = re.match(r'^M(\d+)(?:\.(\d))?$', direccion_m_bit.upper())
-        if not m:
-            return None
-
-        byte_dir = int(m.group(1)) - 1
-        bit_dir = int(m.group(2)) if m.group(2) else 0
-
         resultado = client.read_area(snap7.type.Areas.MK, 0, byte_dir, 1)
         byte_leido = resultado[0]
         estado = (byte_leido >> bit_dir) & 1
 
-        print(f"[DEBUG] Byte leído de M{byte_dir+1}: {byte_leido:08b}")
-        print(f"[DEBUG] M{byte_dir+1}.{bit_dir} = {estado}")
+        print(f"[DEBUG] Byte leído de byte {byte_dir}: {byte_leido:08b}")
+        print(f"[DEBUG] Bit {byte_dir}.{bit_dir} = {estado}")
 
         return estado
 
     except Exception as e:
-        print(f"[ERROR] Fallo al leer marca {direccion_m_bit}: {e}")
+        print(f"[ERROR] Fallo al leer byte {byte_dir} bit {bit_dir}: {e}")
         return None
 
 
@@ -58,11 +47,20 @@ async def run():
     try:
         while True:
             for actuador in actuadores:
-                if actuador.estado:
-                    estado_marca = await asyncio.to_thread(leer_estado_sync, client, actuador.estado)
+                # Leer estado (marca)
+                if actuador.estado_bytebit:
+                    byte_dir, bit_dir = actuador.estado_bytebit
+                    estado_marca = await asyncio.to_thread(leer_bit, client, byte_dir, bit_dir)
                     if estado_marca is not None:
-                        print(f"[INFO] Estado de {actuador.nombre} desde marca {actuador.estado}: {estado_marca}")
-                bit = None
+                        print(f"[INFO] Estado de {actuador.nombre} desde marca byte {byte_dir} bit {bit_dir}: {estado_marca}")
+
+                # Leer marca de arranque si querés registrar también
+                if actuador.marca_arranque_bytebit:
+                    byte_dir, bit_dir = actuador.marca_arranque_bytebit
+                    bit = await asyncio.to_thread(leer_bit, client, byte_dir, bit_dir)
+                else:
+                    bit = None
+
                 if bit is not None:
                     ahora = datetime.now()
                     accion = "ON" if bit == 1 else "OFF"
@@ -78,22 +76,11 @@ async def run():
                     session.add(evento)
                     await asyncio.to_thread(session.commit)
                     print(f"[{ahora.strftime('%H:%M:%S')}] Actuador {actuador.nombre} (id:{actuador.id}): {accion}")
+
             await asyncio.sleep(30)
     except asyncio.CancelledError:
         print("[INFO] Finalizando collector_actuadores.")
     finally:
         await asyncio.to_thread(conexion.desconectar)
         session.close()
-
-
-
-
-
-
-
-
-
-
-
-
 

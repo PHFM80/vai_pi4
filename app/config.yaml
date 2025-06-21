@@ -16,12 +16,12 @@ controlador:
   actuadores:
     - id: 1
       nombre: "LUZ VERDE"
-      marca_arranque: "M1.0"
-      estado: "M1.2"
+      marca_arranque: "M1"
+      estado: "M3"
     - id: 2
       nombre: "2do actudor"
       marca_arranque: ""
-      estado: "M2.1"
+      estado: "M10"
 
 raspberry:
   ip_eth: "192.168.0.31"

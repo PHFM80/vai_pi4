@@ -1,9 +1,9 @@
-# config_reader.py
+# app/config_reader.py
 from pydantic import BaseModel, Field, IPvAnyAddress
-from typing import List
+from typing import List, Optional
 import yaml
-from typing import Optional
 import os
+from plc.marcas_utils import convertir_marca_logo_a_bytebit
 
 
 class Sensor(BaseModel):
@@ -19,6 +19,16 @@ class Actuador(BaseModel):
     nombre: str
     marca_arranque: str
     estado: str
+
+    marca_arranque_bytebit: Optional[tuple[int, int]] = None
+    estado_bytebit: Optional[tuple[int, int]] = None
+
+    def __init__(self, **data):
+        super().__init__(**data)
+        if self.marca_arranque:
+            self.marca_arranque_bytebit = convertir_marca_logo_a_bytebit(self.marca_arranque)
+        if self.estado:
+            self.estado_bytebit = convertir_marca_logo_a_bytebit(self.estado)
 
 
 class Controlador(BaseModel):
@@ -40,12 +50,12 @@ class Configuracion(BaseModel):
     raspberry: Raspberry
 
 
-def cargar_configuracion(path: Optional[str] = None):
+def cargar_configuracion(path: Optional[str] = None) -> Configuracion:
     if path is None:
-        base_dir = os.path.dirname(os.path.abspath(__file__))  # D:\vai_pi4\app
-        path = os.path.join(base_dir, "config.yaml")            # D:\vai_pi4\app\config.yaml
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        path = os.path.join(base_dir, "config.yaml")
 
     with open(path, "r", encoding="utf-8") as archivo:
         data = yaml.safe_load(archivo)
-    
+
     return Configuracion(**data)

@@ -6,7 +6,8 @@ from datetime import datetime
 import asyncio
 from app.database import SessionLocal
 from models.actuadores import EventoActuador
-from snap7.type import Areas
+from plc.marcas_utils import convertir_marca_logo_a_bytebit
+
 
 def guardar_evento_actuador(db_session, id_actuador, accion, id_usuario):
     ahora = datetime.now()
@@ -23,6 +24,7 @@ def guardar_evento_actuador(db_session, id_actuador, accion, id_usuario):
     db_session.commit()
 
 router = APIRouter()
+
 
 @router.post("/accionar-actuador-pi4/")
 async def accionar_desde_api(request: Request):
@@ -43,13 +45,11 @@ async def accionar_desde_api(request: Request):
     if not actuador:
         raise HTTPException(status_code=404, detail="Actuador no encontrado")
 
-    import re
-    m = re.match(r'^M(\d+)(?:\.(\d))?$', actuador.marca_arranque.upper())
-    if not m:
-        raise HTTPException(status_code=400, detail="Formato de marca inválido en actuador")
+    try:
+        byte_dir, bit_dir = convertir_marca_logo_a_bytebit(actuador.marca_arranque)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
-    byte_dir = int(m.group(1)) - 1
-    bit_dir = int(m.group(2)) if m.group(2) else 0
     valor = accion == "activar"
 
     conexion = LOGOConnection(str(config.controlador.ip))
@@ -71,3 +71,4 @@ async def accionar_desde_api(request: Request):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al accionar actuador: {e}")
+
