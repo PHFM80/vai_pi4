@@ -24,7 +24,7 @@ class Actuador(BaseModel):
 
     marca_arranque_bytebit: Optional[tuple[int, int]] = None
     estado_bytebit: Optional[tuple[int, int]] = None
-    estado_pcl_bytebit: Optional[tuple[int, int]] = None
+    estado_plc_bytebit: Optional[tuple[int, int]] = None
 
     def __init__(self, **data):
         super().__init__(**data)
