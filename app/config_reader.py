@@ -18,7 +18,6 @@ class Actuador(BaseModel):
     id: int
     nombre: str
     marca_arranque: str
-    nq_estado: str
     estado: str
 
 

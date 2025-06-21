@@ -10,28 +10,7 @@ from snap7.util import get_bool
 import snap7
 
 
-def leer_bit_vm_sync(client, direccion_vm_bit: str) -> int | None:
-    try:
-        if not direccion_vm_bit.startswith("VRB"):
-            return None
-
-        byte_str, bit_str = direccion_vm_bit[3:].split(".")
-        byte_index = int(byte_str)
-        bit_index = int(bit_str)
-
-        data = client.read_area(snap7.type.Areas['PE'], 0, byte_index, 1)
-
-        valor = get_bool(data, 0, bit_index)
-        print(f"[DEBUG] Byte completo leído: {data[0]:08b}")
-        print(f"[DEBUG] Bit VRB{byte_index}.{bit_index} leído: {valor}")
-        print(f"[DEBUG] Valor leído: {valor}")
-        return int(valor)
-
-    except Exception as e:
-        print(f"[ERROR] Fallo al leer bit VM {direccion_vm_bit}: {e}")
-        return None
-
-def leer_marca_m_sync(client, direccion_m_bit: str) -> int | None:
+def leer_estado_sync(client, direccion_m_bit: str) -> int | None:
     try:
         if not direccion_m_bit.startswith("M"):
             return None
@@ -80,10 +59,10 @@ async def run():
         while True:
             for actuador in actuadores:
                 if actuador.estado:
-                    estado_marca = await asyncio.to_thread(leer_marca_m_sync, client, actuador.estado)
+                    estado_marca = await asyncio.to_thread(leer_estado_sync, client, actuador.estado)
                     if estado_marca is not None:
                         print(f"[INFO] Estado de {actuador.nombre} desde marca {actuador.estado}: {estado_marca}")
-                bit = await asyncio.to_thread(leer_bit_vm_sync, client, actuador.nq_estado)
+                bit = None
                 if bit is not None:
                     ahora = datetime.now()
                     accion = "ON" if bit == 1 else "OFF"

@@ -1,4 +1,4 @@
-# api/leer_marca_m8_api.py
+# api/leer_marca_m_api.py
 from fastapi import APIRouter, Request, HTTPException
 from plc.connection import LOGOConnection
 from app.config_reader import cargar_configuracion
@@ -6,7 +6,7 @@ import asyncio
 from snap7.type import Areas
 
 router = APIRouter()
-@router.get("/leer-marcas-pi4/")
+@router.get("/leer-marca-pi4/")
 async def leer_marcas_pi4(marca: str = "M1", id_actuador: int = None):
     # Validar formato básico marca: puede ser "M1" o "M1.3"
     import re
