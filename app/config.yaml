@@ -11,13 +11,19 @@ controlador:
     - id: 2
       nombre: "mod 2"
       vm: 2
-      parametro_minimo: 200
-      parametro_maximo: 600
+      parametro_minimo: 500
+      parametro_maximo: 650
   actuadores:
     - id: 1
       nombre: "LUZ VERDE"
       marca_arranque: "M1.0"
       nq_estado: "VRB0.7"
+      estado: "M3.0"
+    - id: 2
+      nombre: "No hay"
+      marca_arranque: ""
+      nq_estado: "vrb0.7"
+      estado: "M2.0"
 
 raspberry:
   ip_eth: "192.168.0.31"

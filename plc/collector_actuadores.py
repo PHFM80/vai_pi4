@@ -6,8 +6,6 @@ from app.database import engine
 from models.actuadores import EventoActuador
 from app.config_reader import cargar_configuracion
 from plc.connection import LOGOConnection
-
-
 from snap7.util import get_bool
 import snap7
 
@@ -33,6 +31,32 @@ def leer_bit_vm_sync(client, direccion_vm_bit: str) -> int | None:
         print(f"[ERROR] Fallo al leer bit VM {direccion_vm_bit}: {e}")
         return None
 
+def leer_marca_m_sync(client, direccion_m_bit: str) -> int | None:
+    try:
+        if not direccion_m_bit.startswith("M"):
+            return None
+
+        import re
+        m = re.match(r'^M(\d+)(?:\.(\d))?$', direccion_m_bit.upper())
+        if not m:
+            return None
+
+        byte_dir = int(m.group(1)) - 1
+        bit_dir = int(m.group(2)) if m.group(2) else 0
+
+        resultado = client.read_area(snap7.types.Areas.MK, 0, byte_dir, 1)
+        byte_leido = resultado[0]
+        estado = (byte_leido >> bit_dir) & 1
+
+        print(f"[DEBUG] Byte leído de M{byte_dir+1}: {byte_leido:08b}")
+        print(f"[DEBUG] M{byte_dir+1}.{bit_dir} = {estado}")
+
+        return estado
+
+    except Exception as e:
+        print(f"[ERROR] Fallo al leer marca {direccion_m_bit}: {e}")
+        return None
+
 
 async def run():
     config = cargar_configuracion()
@@ -55,6 +79,10 @@ async def run():
     try:
         while True:
             for actuador in actuadores:
+                if actuador.estado:
+                    estado_marca = await asyncio.to_thread(leer_marca_m_sync, client, actuador.estado)
+                    if estado_marca is not None:
+                        print(f"[INFO] Estado de {actuador.nombre} desde marca {actuador.estado}: {estado_marca}")
                 bit = await asyncio.to_thread(leer_bit_vm_sync, client, actuador.nq_estado)
                 if bit is not None:
                     ahora = datetime.now()
