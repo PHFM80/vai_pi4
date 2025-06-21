@@ -1,30 +1,15 @@
 # D:\vai_pi4\api\accionar_actuador_pi4_api.py
+
 from fastapi import APIRouter, Request, HTTPException
 from plc.connection import LOGOConnection
 from app.config_reader import cargar_configuracion
-from datetime import datetime
 import asyncio
 from app.database import SessionLocal
-from models.actuadores import EventoActuador
 from plc.marcas_utils import convertir_marca_logo_a_bytebit
-
-
-def guardar_evento_actuador(db_session, id_actuador, accion, id_usuario):
-    ahora = datetime.now()
-    evento = EventoActuador(
-        accion='ON' if accion == 'activar' else 'OFF',
-        fecha=ahora.date(),
-        hora=ahora.time(),
-        actuador=id_actuador,
-        origen_evento='usuario',
-        usuario=id_usuario,
-        controlador=None,
-    )
-    db_session.add(evento)
-    db_session.commit()
+from plc.guardar_eventos_actuador_utils import guardar_evento_actuador
+from datetime import datetime
 
 router = APIRouter()
-
 
 @router.post("/accionar-actuador-pi4/")
 async def accionar_desde_api(request: Request):
@@ -60,7 +45,14 @@ async def accionar_desde_api(request: Request):
         await asyncio.to_thread(conexion.desconectar)
 
         session = SessionLocal()
-        guardar_evento_actuador(session, id_actuador, accion, id_usuario)
+        guardar_evento_actuador(
+            db_session=session,
+            id_actuador=id_actuador,
+            accion="ON" if valor else "OFF",
+            origen="usuario",
+            usuario=id_usuario,
+            controlador=None
+        )
         session.close()
 
         ahora = datetime.now()
@@ -69,6 +61,6 @@ async def accionar_desde_api(request: Request):
             "fecha": ahora.date().isoformat(),
             "hora": ahora.time().strftime("%H:%M:%S"),
         }
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al accionar actuador: {e}")
-

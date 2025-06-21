@@ -12,6 +12,7 @@ class Sensor(BaseModel):
     vm: int
     parametro_maximo: float
     parametro_minimo: float
+    actuadores_asociados: Optional[List[int]] = [] 
 
 
 class Actuador(BaseModel):
@@ -19,9 +20,11 @@ class Actuador(BaseModel):
     nombre: str
     marca_arranque: str
     estado: str
+    estado_plc: str
 
     marca_arranque_bytebit: Optional[tuple[int, int]] = None
     estado_bytebit: Optional[tuple[int, int]] = None
+    estado_pcl_bytebit: Optional[tuple[int, int]] = None
 
     def __init__(self, **data):
         super().__init__(**data)
@@ -29,6 +32,8 @@ class Actuador(BaseModel):
             self.marca_arranque_bytebit = convertir_marca_logo_a_bytebit(self.marca_arranque)
         if self.estado:
             self.estado_bytebit = convertir_marca_logo_a_bytebit(self.estado)
+        if self.estado:
+            self.estado_plc_bytebit = convertir_marca_logo_a_bytebit(self.estado_plc)   
 
 
 class Controlador(BaseModel):

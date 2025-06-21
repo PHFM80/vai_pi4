@@ -8,6 +8,8 @@ from models.actuadores import EventoActuador
 from app.config_reader import cargar_configuracion
 from plc.connection import LOGOConnection
 import snap7
+from plc.guardar_eventos_actuador_utils import guardar_evento_actuador, comparar_estado_plc, actualizar_estado_plc
+
 
 
 def leer_bit(client, byte_dir: int, bit_dir: int) -> int | None:
@@ -47,35 +49,36 @@ async def run():
     try:
         while True:
             for actuador in actuadores:
-                # Leer estado (marca)
+                # Leer estado (marca) para impresión / monitoreo
                 if actuador.estado_bytebit:
                     byte_dir, bit_dir = actuador.estado_bytebit
                     estado_marca = await asyncio.to_thread(leer_bit, client, byte_dir, bit_dir)
                     if estado_marca is not None:
                         print(f"[INFO] Estado de {actuador.nombre} desde marca byte {byte_dir} bit {bit_dir}: {estado_marca}")
 
-                # Leer marca de arranque si querés registrar también
-                if actuador.marca_arranque_bytebit:
-                    byte_dir, bit_dir = actuador.marca_arranque_bytebit
-                    bit = await asyncio.to_thread(leer_bit, client, byte_dir, bit_dir)
-                else:
-                    bit = None
+                # Leer estado_plc para detectar cambio real en el PLC
+                if actuador.estado_plc_bytebit:
+                    byte_dir_plc, bit_dir_plc = actuador.estado_plc_bytebit
+                    estado_plc = await asyncio.to_thread(leer_bit, client, byte_dir_plc, bit_dir_plc)
+                    if estado_plc is not None:
+                        accion = "ON" if estado_plc == 1 else "OFF"
 
-                if bit is not None:
-                    ahora = datetime.now()
-                    accion = "ON" if bit == 1 else "OFF"
-                    evento = EventoActuador(
-                        accion=accion,
-                        fecha=ahora.date(),
-                        hora=ahora.time(),
-                        actuador=actuador.id,
-                        origen_evento="plc",
-                        usuario=None,
-                        controlador=controlador_id
-                    )
-                    session.add(evento)
-                    await asyncio.to_thread(session.commit)
-                    print(f"[{ahora.strftime('%H:%M:%S')}] Actuador {actuador.nombre} (id:{actuador.id}): {accion}")
+                        # Comparar con último estado guardado
+                        cambio = comparar_estado_plc(session, actuador.id, accion)
+
+                        if cambio:
+                            # Guardar evento histórico y actualizar estado
+                            guardar_evento_actuador(
+                                db_session=session,
+                                id_actuador=actuador.id,
+                                accion=accion,
+                                origen="plc",
+                                usuario=None,
+                                controlador=controlador_id,
+                            )
+                            actualizar_estado_plc(session, actuador.id, accion)
+                            ahora = datetime.now()
+                            print(f"[{ahora.strftime('%H:%M:%S')}] Cambio detectado y guardado para actuador {actuador.nombre} (id:{actuador.id}): {accion}")
 
             await asyncio.sleep(30)
     except asyncio.CancelledError:

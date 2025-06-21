@@ -2,7 +2,10 @@ vai_pi4
 |
 |--api/
 |   |
+|   |-accionar_actuador_pi4.py
 |   |-alerta_to_servidor.py 
+|   |-escaner_de_marcas.py 
+|   |-leer_marca_m_api.py
 |   |-tiempo_real_api.py
 |   |-visualizacion_actuadores_bd_api.py 
 |   |-visualizacion_sensores_bd_api.py
@@ -13,7 +16,7 @@ vai_pi4
 |   |-config_reader.py
 |   |-config.yaml
 |   |-database.py
-|   |-vrb_scanner.py 
+|   |-
 |
 |--models/ 
 |   |
@@ -25,6 +28,8 @@ vai_pi4
 |   |-collector_actuadores.py 
 |   |-collector_sensores.py
 |   |-connection.py 
+|   |-guardar_eventos_actuador_utils.py
+|   |-marcas_utils.py 
 |  
 |--scheduler/
 |   |
