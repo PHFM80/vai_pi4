@@ -19,11 +19,11 @@ controlador:
       marca_arranque: "M1.0"
       nq_estado: "VRB0.7"
       estado: "M3.0"
-    - id: 2
-      nombre: "2do actudor"
-      marca_arranque: ""
-      nq_estado: "vrb0.7"
-      estado: "M10.0"
+#    - id: 2
+#     nombre: "2do actudor"
+#      marca_arranque: ""
+#      nq_estado: "vrb0.7"
+#      estado: "M10.0"
 
 raspberry:
   ip_eth: "192.168.0.31"
