@@ -18,7 +18,7 @@ controlador:
       nombre: "LUZ VERDE"
       marca_arranque: "M1.0"
       nq_estado: "VRB0.7"
-      estado: "M1.3"
+      estado: "M1.2"
 #    - id: 2
 #     nombre: "2do actudor"
 #      marca_arranque: ""
