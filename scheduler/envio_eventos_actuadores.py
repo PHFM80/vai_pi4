@@ -65,7 +65,7 @@ def def_envio_eventos_actuadores():
 
         if not exito:
             logger.error("❌ No se logró enviar los eventos luego de 3 intentos.")
-            print("[DEBUG] No se logró enviar los eventos luego de 3 intentos.")
+            #print("[DEBUG] No se logró enviar los eventos luego de 3 intentos.")
 
 
     finally:

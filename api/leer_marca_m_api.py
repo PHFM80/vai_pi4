@@ -27,7 +27,7 @@ async def leer_marca_pi4(marca: str = "M1"):
         byte = resultado[0]
         bits = [(byte >> i) & 1 for i in range(8)]
 
-        print(f"[DEBUG] Byte leído de M{byte_dir + 1}: {byte:08b}")
+        #print(f"[DEBUG] Byte leído de M{byte_dir + 1}: {byte:08b}")
         for i, bit in enumerate(bits):
             print(f"M{byte_dir + 1}.{i} = {bool(bit)}")
 

@@ -43,7 +43,7 @@ async def run():
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    print("[INFO] Iniciando lectura de actuadores...")
+    #print("[INFO] Iniciando lectura de actuadores...")
     try:
         while True:
             for actuador in actuadores:

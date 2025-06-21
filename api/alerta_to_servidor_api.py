@@ -21,8 +21,7 @@ def alerta_desde_collector(controlador_id: int, sensor_id: int, valor: float):
         if response.status_code == 201:
             print("[ALERTA] Enviada correctamente al servidor")
         else:
-            pass
-            #print(f"[ALERTA] Error al enviar alerta: {response.status_code} - {response.text}")
+            print(f"[ALERTA] Error al enviar alerta: {response.status_code} - {response.text}")
     except Exception as e:
-        pass
-        #logger.error(f"[ALERTA] Fallo en el envío de alerta: {e}")
+
+        logger.error(f"[ALERTA] Fallo en el envío de alerta: {e}")

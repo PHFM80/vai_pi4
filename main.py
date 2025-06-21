@@ -21,7 +21,7 @@ async def startup_event():
     init_db()  
     asyncio.create_task(run_sensores())
     asyncio.create_task(run_actuadores())
-    #iniciar_scheduler()  
+    iniciar_scheduler()  
 
 app.include_router(sensores_router)
 app.include_router(actuadores_router)
