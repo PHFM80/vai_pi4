@@ -44,7 +44,7 @@ def leer_marca_m_sync(client, direccion_m_bit: str) -> int | None:
         byte_dir = int(m.group(1)) - 1
         bit_dir = int(m.group(2)) if m.group(2) else 0
 
-        resultado = client.read_area(snap7.types.Areas.MK, 0, byte_dir, 1)
+        resultado = client.read_area(snap7.type.Areas.MK, 0, byte_dir, 1)
         byte_leido = resultado[0]
         estado = (byte_leido >> bit_dir) & 1
 
