@@ -99,7 +99,7 @@ async def run():
                     session.add(evento)
                     await asyncio.to_thread(session.commit)
                     print(f"[{ahora.strftime('%H:%M:%S')}] Actuador {actuador.nombre} (id:{actuador.id}): {accion}")
-            await asyncio.sleep(60)
+            await asyncio.sleep(30)
     except asyncio.CancelledError:
         print("[INFO] Finalizando collector_actuadores.")
     finally:
