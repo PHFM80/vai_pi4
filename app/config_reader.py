@@ -32,7 +32,7 @@ class Actuador(BaseModel):
             self.marca_arranque_bytebit = convertir_marca_logo_a_bytebit(self.marca_arranque)
         if self.estado:
             self.estado_bytebit = convertir_marca_logo_a_bytebit(self.estado)
-        if self.estado:
+        if self.estado_plc:
             self.estado_plc_bytebit = convertir_marca_logo_a_bytebit(self.estado_plc)   
 
 
