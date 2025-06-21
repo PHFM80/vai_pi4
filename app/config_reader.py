@@ -19,6 +19,7 @@ class Actuador(BaseModel):
     nombre: str
     marca_arranque: str
     nq_estado: str
+    estado: str
 
 
 class Controlador(BaseModel):
