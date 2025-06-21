@@ -1,4 +1,4 @@
-# collector_sensores.py
+# plc\collector_sensores.py
 import asyncio
 from datetime import datetime
 from sqlalchemy.orm import sessionmaker
@@ -7,6 +7,8 @@ from models.sensores import SensorLectura
 from app.config_reader import cargar_configuracion
 from plc.connection import LOGOConnection
 from api.alerta_to_servidor_api import alerta_desde_collector
+from plc.modificar_marca_desde_collector_utils import desactivar_actuadores_de_sensor
+
 
 def leer_valor_vm_sync(client, direccion_vm):
     try:
@@ -54,6 +56,9 @@ async def run():
                             controlador_id=config.controlador.id,
                             sensor_id=sensor.id,
                             valor=valor)
+                    if valor < sensor.parametro_minimo:
+                        desactivar_actuadores_de_sensor(sensor, client, config)
+
             await asyncio.sleep(30)
     except asyncio.CancelledError:
         print("[INFO] Finalizando collector_sensores.")
