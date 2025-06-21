@@ -21,7 +21,7 @@ controlador:
     - id: 2
       nombre: "2do actudor"
       marca_arranque: ""
-      estado: "M10.0"
+      estado: "M2.1"
 
 raspberry:
   ip_eth: "192.168.0.31"
