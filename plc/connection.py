@@ -1,5 +1,6 @@
-#connection.py
+# plc\connection.py
 import snap7
+from snap7.type import Areas
 
 class LOGOConnection:
     def __init__(self, ip: str):
@@ -23,3 +24,39 @@ class LOGOConnection:
         except Exception as e:
             print(f"[ERROR] Fallo al desconectar del PLC {self.ip}: {e}")
 
+    def _map_area(self, area: str):
+        # Mapear string area a Areas.* de snap7
+        area = area.upper()
+        if area in ("M", "MK"):
+            return Areas.MK
+        elif area == "PE":
+            return Areas.PE
+        elif area == "PA":
+            return Areas.PA
+        elif area == "DB":
+            return Areas.DB
+        else:
+            raise ValueError(f"Área inválida: {area}")
+
+    def read_bool(self, area: str, direccion: int, bit: int = 0) -> bool:
+        try:
+            area_snap7 = self._map_area(area)
+            resultado = self.client.read_area(area_snap7, 0, direccion, 1)
+            byte = resultado[0]
+            return bool((byte >> bit) & 1)
+        except Exception as e:
+            print(f"[ERROR] Al leer marca {area}{direccion} bit {bit}: {e}")
+            return False
+
+    def write_bool(self, area: str, direccion: int, value: bool, bit: int = 0):
+        try:
+            area_snap7 = self._map_area(area)
+            byte_actual = self.client.read_area(area_snap7, 0, direccion, 1)[0]
+            if value:
+                byte_modificado = byte_actual | (1 << bit)
+            else:
+                byte_modificado = byte_actual & ~(1 << bit)
+            self.client.write_area(area_snap7, 0, direccion, bytes([byte_modificado]))
+        except Exception as e:
+            print(f"[ERROR] No se pudo escribir en {area}{direccion} bit {bit}: {e}")
+            raise

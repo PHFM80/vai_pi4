@@ -8,10 +8,11 @@ from api.visualizacion_sensores_bd_api import router as sensores_router
 from api.visualizacion_actuadores_bd_api import router as actuadores_router
 from scheduler.scheduler import iniciar_scheduler  
 from api.tiempo_real_api import router as tiempo_real_router
+from api.accionar_actuador_pi4_api import router as actuador_router
+from api.escaner_de_marcas_M import router as escaner_marcas_router
+from api.leer_marca_m_api import router as leer_marca_m_router
 
 
-
-app = FastAPI()
 
 app = FastAPI()
 
@@ -25,6 +26,10 @@ async def startup_event():
 app.include_router(sensores_router)
 app.include_router(actuadores_router)
 app.include_router(tiempo_real_router)
+app.include_router(actuador_router)
+app.include_router(escaner_marcas_router, prefix="/api")
+app.include_router(leer_marca_m_router, prefix="/api")
+
 
 @app.get("/")
 async def root():

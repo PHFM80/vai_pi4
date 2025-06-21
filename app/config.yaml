@@ -8,16 +8,24 @@ controlador:
       vm: 0
       parametro_minimo: 400
       parametro_maximo: 800
+      actuadores_asociados: [1]
     - id: 2
       nombre: "mod 2"
       vm: 2
-      parametro_minimo: 200
-      parametro_maximo: 600
+      parametro_minimo: 500
+      parametro_maximo: 650
+      actuadores_asociados: []
   actuadores:
     - id: 1
       nombre: "LUZ VERDE"
-      marca_arranque: "M8"
-      nq_estado: "VRB0.7"
+      marca_arranque: "M1"
+      estado: "M3"
+      estado_plc: "M2"
+    - id: 2
+      nombre: "2do actudor"
+      marca_arranque: ""
+      estado: "M10"
+      estado_plc: "M11"
 
 raspberry:
   ip_eth: "192.168.0.31"

@@ -4,7 +4,7 @@ from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 from app.config_reader import cargar_configuracion
 from plc.connection import LOGOConnection
-from collector_sensores import leer_valor_vm_sync
+from plc.collector_sensores import leer_valor_vm_sync
 
 router = APIRouter()
 
