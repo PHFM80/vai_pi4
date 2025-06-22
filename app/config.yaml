@@ -22,7 +22,7 @@ controlador:
       estado: "M3"
       estado_plc: "M2"
     - id: 2
-      nombre: "2do actudor"
+      nombre: "vacio"
       marca_arranque: ""
       estado: "M10"
       estado_plc: "M11"
