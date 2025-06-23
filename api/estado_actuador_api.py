@@ -36,13 +36,13 @@ async def estado_actuador_pi4(id_actuador: int):
         print(f"[DEBUG] Leyendo estado de actuador {id_actuador}, marca PLC: {actuador.estado_plc}")
         print(f"[DEBUG] byte_dir: {byte_dir}, bit_solicitado: {bit_solicitado}")
         print(f"[DEBUG] Resultado raw byte leído: {resultado}")
-        print(f"[DEBUG] Estado bit calculado: {estado_bit}")
+        
 
         await asyncio.to_thread(conexion.desconectar)
 
         byte = resultado[0]
         estado_bit = (byte >> bit_solicitado) & 1
-
+        print(f"[DEBUG] Estado bit calculado: {estado_bit}")
         ahora = datetime.now()
         return {
             "actuador_id": id_actuador,
