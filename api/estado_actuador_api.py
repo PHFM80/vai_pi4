@@ -33,6 +33,11 @@ async def estado_actuador_pi4(id_actuador: int):
     try:
         await asyncio.to_thread(conexion.conectar)
         resultado = await asyncio.to_thread(conexion.client.read_area, Areas.MK, 0, byte_dir, 1)
+        print(f"[DEBUG] Leyendo estado de actuador {id_actuador}, marca PLC: {actuador.estado_plc}")
+        print(f"[DEBUG] byte_dir: {byte_dir}, bit_solicitado: {bit_solicitado}")
+        print(f"[DEBUG] Resultado raw byte leído: {resultado}")
+        print(f"[DEBUG] Estado bit calculado: {estado_bit}")
+
         await asyncio.to_thread(conexion.desconectar)
 
         byte = resultado[0]
