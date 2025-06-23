@@ -19,7 +19,7 @@ async def obtener_estado_actuador(id_actuador: int) -> int:
         raise ValueError(f"Actuador con ID {id_actuador} no tiene definida una marca de estado")
 
     try:
-        byte_dir, bit_solicitado = convertir_marca_logo_a_bytebit(actuador.estado_plc)
+        byte_dir, bit_solicitado = convertir_marca_logo_a_bytebit(actuador.estado)
     except ValueError as e:
         raise ValueError(f"Error al convertir marca: {e}")
 
@@ -29,7 +29,7 @@ async def obtener_estado_actuador(id_actuador: int) -> int:
         resultado = await asyncio.to_thread(conexion.client.read_area, Areas.MK, 0, byte_dir, 1)
         await asyncio.to_thread(conexion.desconectar)
 
-        print(f"[DEBUG] Leyendo estado de actuador {id_actuador}, marca PLC: {actuador.estado_plc}")
+        print(f"[DEBUG] Leyendo estado de actuador {id_actuador}, marca PLC: {actuador.estado}")
         print(f"[DEBUG] byte_dir: {byte_dir}, bit_solicitado: {bit_solicitado}")
         print(f"[DEBUG] Resultado raw byte leído: {resultado}")
 
