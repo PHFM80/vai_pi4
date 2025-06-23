@@ -24,10 +24,13 @@ def obtener_eventos_no_enviados(db: Session):
             payload["eventos"][id_actuador] = []
 
         payload["eventos"][id_actuador].append({
-            "accion": evento.accion,
-            "fecha": evento.fecha.isoformat(),
-            "hora": evento.hora.isoformat()
-        })
+        "accion": evento.accion,
+        "fecha": evento.fecha.isoformat(),
+        "hora": evento.hora.isoformat(),
+        "origen_evento": evento.origen_evento,
+        "usuario": evento.usuario,
+        "controlador": evento.controlador,
+        "actuador": evento.actuador})
 
         ids_a_borrar.append(evento.id)
     return payload, ids_a_borrar
