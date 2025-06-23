@@ -1,55 +1,27 @@
-# api\estado_actuador_api.py
-
 from fastapi import APIRouter, HTTPException
 from datetime import datetime
-from plc.connection import LOGOConnection
-from app.config_reader import cargar_configuracion
-from plc.marcas_utils import convertir_marca_logo_a_bytebit
-from snap7.type import Areas
-import asyncio
+from plc.estado_actuador_utils import obtener_estado_actuador
 
 router = APIRouter()
 
 @router.get("/estado-actuador-pi4/")
 async def estado_actuador_pi4(id_actuador: int):
-    # Cargar configuración
-    config = cargar_configuracion()
-    actuador = next((a for a in config.controlador.actuadores if a.id == id_actuador), None)
-
-    if not actuador:
-        raise HTTPException(status_code=404, detail=f"Actuador con ID {id_actuador} no encontrado")
-
-    if not actuador.estado_plc:
-        raise HTTPException(status_code=400, detail=f"El actuador con ID {id_actuador} no tiene definida una marca de estado")
-
-    # Convertir la marca a byte y bit
     try:
-        byte_dir, bit_solicitado = convertir_marca_logo_a_bytebit(actuador.estado_plc)
+        estado_num = await obtener_estado_actuador(id_actuador)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e))
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-    # Conectar al PLC
-    conexion = LOGOConnection(str(config.controlador.ip))
-    try:
-        await asyncio.to_thread(conexion.conectar)
-        resultado = await asyncio.to_thread(conexion.client.read_area, Areas.MK, 0, byte_dir, 1)
-        print(f"[DEBUG] Leyendo estado de actuador {id_actuador}, marca PLC: {actuador.estado_plc}")
-        print(f"[DEBUG] byte_dir: {byte_dir}, bit_solicitado: {bit_solicitado}")
-        print(f"[DEBUG] Resultado raw byte leído: {resultado}")
-        
+    estado_str = "ON" if estado_num == 1 else "OFF"
 
-        await asyncio.to_thread(conexion.desconectar)
+    ahora = datetime.now()
+    fecha_str = ahora.strftime("%d/%m/%Y")
+    hora_str = ahora.strftime("%H:%M:%S")
 
-        byte = resultado[0]
-        estado_bit = (byte >> bit_solicitado) & 1
-        print(f"[DEBUG] Estado bit calculado: {estado_bit}")
-        ahora = datetime.now()
-        return {
-            "actuador_id": id_actuador,
-            "estado": estado_bit,
-            "fecha": ahora.date().isoformat(),
-            "hora": ahora.time().isoformat(timespec='seconds')
-        }
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error al leer estado del actuador: {e}")
+    return {
+        "actuador_id": id_actuador,
+        "estado": estado_str,
+        "fecha": fecha_str,
+        "hora": hora_str
+    }

@@ -9,7 +9,7 @@ from app.config_reader import cargar_configuracion
 from plc.connection import LOGOConnection
 from api.alerta_to_servidor_api import alerta_desde_collector
 from plc.modificar_marca_desde_collector_utils import desactivar_actuadores_de_sensor
-
+from plc.estado_actuador_utils import obtener_estado_actuador
 
 def leer_valor_vm_sync(client, direccion_vm):
     try:
@@ -53,14 +53,10 @@ async def run():
                     print(f"[{ahora.strftime('%H:%M:%S')}] Sensor {sensor.nombre}: {valor}")
                     if valor > sensor.parametro_maximo:
                         #print(f"[ALERTA] Valor fuera de rango detectado en {sensor.nombre}: {valor}")
-                        alerta_desde_collector(
-                            controlador_id=config.controlador.id,
-                            sensor_id=sensor.id,
-                            valor=valor)
+                        alerta_desde_collector(controlador_id=config.controlador.id, sensor_id=sensor.id, valor=valor)
                     if valor < sensor.parametro_minimo:
                         for id_actuador in sensor.actuadores_asociados:
-                            response = requests.get(f"http://192.168.1.31:8000/estado-actuador-pi4/?id_actuador={id_actuador}")
-                            estado_actuador = response.json()["estado"]
+                            estado_actuador = await obtener_estado_actuador(id_actuador)
                             if estado_actuador == 1:
                                 desactivar_actuadores_de_sensor(sensor, client, config, session)
 
