@@ -12,7 +12,7 @@ class Sensor(BaseModel):
     vm: int
     parametro_maximo: float
     parametro_minimo: float
-    actuadores_asociados: Optional[List[int]] = [] 
+    actuadores_asociados: List[int] = Field(default_factory=list)
 
 
 class Actuador(BaseModel):

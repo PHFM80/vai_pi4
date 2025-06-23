@@ -11,6 +11,7 @@ from api.tiempo_real_api import router as tiempo_real_router
 from api.accionar_actuador_pi4_api import router as actuador_router
 from api.escaner_de_marcas_M import router as escaner_marcas_router
 from api.leer_marca_m_api import router as leer_marca_m_router
+from api.estado_actuador_api import router as estado_actuador_router
 
 
 
@@ -29,6 +30,8 @@ app.include_router(tiempo_real_router)
 app.include_router(actuador_router)
 app.include_router(escaner_marcas_router, prefix="/api")
 app.include_router(leer_marca_m_router, prefix="/api")
+app.include_router(estado_actuador_router)
+
 
 
 @app.get("/")
