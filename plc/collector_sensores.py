@@ -57,7 +57,7 @@ async def run():
                             sensor_id=sensor.id,
                             valor=valor)
                     if valor < sensor.parametro_minimo:
-                        desactivar_actuadores_de_sensor(sensor, client, config)
+                        desactivar_actuadores_de_sensor(sensor, client, config, session)
 
             await asyncio.sleep(30)
     except asyncio.CancelledError:
