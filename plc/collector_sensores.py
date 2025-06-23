@@ -1,6 +1,7 @@
 # plc\collector_sensores.py
 import asyncio
 from datetime import datetime
+import requests
 from sqlalchemy.orm import sessionmaker
 from app.database import engine
 from models.sensores import SensorLectura
@@ -57,7 +58,11 @@ async def run():
                             sensor_id=sensor.id,
                             valor=valor)
                     if valor < sensor.parametro_minimo:
-                        desactivar_actuadores_de_sensor(sensor, client, config, session)
+                        for id_actuador in sensor.actuadores_asociados:
+                            response = requests.get(f"http://192.168.1.31:8000/estado-actuador-pi4/?id_actuador={id_actuador}")
+                            estado_actuador = response.json()["estado"]
+                            if estado_actuador == 1:
+                                desactivar_actuadores_de_sensor(sensor, client, config, session)
 
             await asyncio.sleep(30)
     except asyncio.CancelledError:
