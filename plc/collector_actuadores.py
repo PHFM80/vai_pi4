@@ -9,7 +9,8 @@ from app.config_reader import cargar_configuracion
 from plc.connection import LOGOConnection
 import snap7
 from plc.guardar_eventos_actuador_utils import guardar_evento_actuador, comparar_estado_plc, actualizar_estado_plc
-
+import logging
+logger = logging.getLogger(__name__)
 
 
 def leer_bit(client, byte_dir: int, bit_dir: int) -> int | None:
@@ -18,13 +19,14 @@ def leer_bit(client, byte_dir: int, bit_dir: int) -> int | None:
         byte_leido = resultado[0]
         estado = (byte_leido >> bit_dir) & 1
 
-        print(f"[DEBUG] Byte leído de byte {byte_dir}: {byte_leido:08b}")
-        print(f"[DEBUG] Bit {byte_dir}.{bit_dir} = {estado}")
+        #print(f"[DEBUG] Byte leído de byte {byte_dir}: {byte_leido:08b}")
+        #print(f"[DEBUG] Bit {byte_dir}.{bit_dir} = {estado}")
 
         return estado
 
     except Exception as e:
-        print(f"[ERROR] Fallo al leer byte {byte_dir} bit {bit_dir}: {e}")
+        logger.error(f"Fallo al leer byte {byte_dir} bit {bit_dir}: {e}")
+        #print(f"[ERROR] Fallo al leer byte {byte_dir} bit {bit_dir}: {e}")
         return None
 
 
@@ -39,7 +41,8 @@ async def run():
         await asyncio.to_thread(conexion.conectar)
         client = conexion.client
     except Exception as e:
-        print(f"[ERROR] No se pudo conectar al PLC: {e}")
+        logger.error(f"No se pudo conectar al PLC: {e}")
+        #print(f"[ERROR] No se pudo conectar al PLC: {e}")
         return
 
     Session = sessionmaker(bind=engine)
@@ -54,7 +57,8 @@ async def run():
                     byte_dir, bit_dir = actuador.estado_bytebit
                     estado_marca = await asyncio.to_thread(leer_bit, client, byte_dir, bit_dir)
                     if estado_marca is not None:
-                        print(f"[INFO] Estado de {actuador.nombre} desde marca byte {byte_dir} bit {bit_dir}: {estado_marca}")
+                        logger.debug(f"Estado de {actuador.nombre} desde marca byte {byte_dir} bit {bit_dir}: {estado_marca}")
+                        #print(f"[INFO] Estado de {actuador.nombre} desde marca byte {byte_dir} bit {bit_dir}: {estado_marca}")
 
                 # Leer estado_plc para detectar cambio real en el PLC
                 if actuador.estado_plc_bytebit:
@@ -78,11 +82,12 @@ async def run():
                             )
                             actualizar_estado_plc(session, actuador.id, accion)
                             ahora = datetime.now()
-                            print(f"[{ahora.strftime('%H:%M:%S')}] Cambio detectado y guardado para actuador {actuador.nombre} (id:{actuador.id}): {accion}")
+                            #print(f"[{ahora.strftime('%H:%M:%S')}] Cambio detectado y guardado para actuador {actuador.nombre} (id:{actuador.id}): {accion}")
 
-            await asyncio.sleep(30)
+            await asyncio.sleep(60)
     except asyncio.CancelledError:
-        print("[INFO] Finalizando collector_actuadores.")
+        logger.info("Finalizando collector_actuadores.")
+        #print("[INFO] Finalizando collector_actuadores.")
     finally:
         await asyncio.to_thread(conexion.desconectar)
         session.close()
