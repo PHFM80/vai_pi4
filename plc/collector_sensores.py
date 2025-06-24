@@ -46,7 +46,7 @@ async def run():
                         id_sensor=sensor.id,
                         valor=valor,
                         fecha=ahora.date(),
-                        hora=ahora.time()
+                        hora=ahora.time().replace(microsecond=0)
                     )
                     session.add(lectura)
                     await asyncio.to_thread(session.commit)
@@ -60,7 +60,7 @@ async def run():
                             if estado_actuador == 1:
                                 desactivar_actuadores_de_sensor(sensor, client, config, session)
 
-            await asyncio.sleep(30)
+            await asyncio.sleep(60)
     except asyncio.CancelledError:
         print("[INFO] Finalizando collector_sensores.")
     finally:

@@ -6,9 +6,12 @@ import requests
 import time
 import logging
 from app.database import SessionLocal
+from app.config_reader import cargar_configuracion
 
 # URL del servidor central (ajustar IP si es necesario)
-URL_SERVIDOR = "http://192.168.1.33:8000/evento-actuador-create/"
+config = cargar_configuracion()
+ip_controlador = str(config.controlador.ip)
+URL_SERVIDOR = f"http://{ip_controlador}:8000/datos-sensor-create/"
 
 logger = logging.getLogger(__name__)
 

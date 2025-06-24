@@ -9,7 +9,7 @@ def guardar_evento_actuador(db_session, id_actuador: int, accion: str, origen: s
     evento = EventoActuador(
         accion=accion,
         fecha=ahora.date(),
-        hora=ahora.time(),
+        hora=ahora.time().replace(microsecond=0),
         actuador=id_actuador,
         origen_evento=origen,
         usuario=usuario,

@@ -2,9 +2,12 @@
 import requests
 from datetime import datetime
 import logging
+from app.config_reader import cargar_configuracion
 
 # Configurá esta URL con la IP o dominio correcto del servidor central
-URL_ALERTA = "http://192.168.1.33:8000/alerta-from-controlador/"
+config = cargar_configuracion()
+ip_controlador = str(config.controlador.ip)
+URL_ALERTA = f"http://{ip_controlador}:8000/alerta-from-controlador/"
 
 logger = logging.getLogger(__name__)
 
@@ -19,9 +22,10 @@ def alerta_desde_collector(controlador_id: int, sensor_id: int, valor: float):
     try:
         response = requests.post(URL_ALERTA, json=payload, timeout=5)
         if response.status_code == 201:
-            print("[ALERTA] Enviada correctamente al servidor")
+            logger.info("[ALERTA] Enviada correctamente al servidor")
+            #print("[ALERTA] Enviada correctamente al servidor")
         else:
-            print(f"[ALERTA] Error al enviar alerta: {response.status_code} - {response.text}")
+            logger.warning(f"[ALERTA] Error al enviar alerta: {response.status_code} - {response.text}")
+            #print(f"[ALERTA] Error al enviar alerta: {response.status_code} - {response.text}")
     except Exception as e:
-
         logger.error(f"[ALERTA] Fallo en el envío de alerta: {e}")
