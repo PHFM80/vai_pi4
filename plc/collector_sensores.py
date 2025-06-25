@@ -60,7 +60,8 @@ async def run():
                             if estado_actuador == 1:
                                 desactivar_actuadores_de_sensor(sensor, client, config, session)
 
-            await asyncio.sleep(60)
+            await asyncio.sleep(config.intervalos.intervalo_collectorS)
+
     except asyncio.CancelledError:
         print("[INFO] Finalizando collector_sensores.")
     finally:
