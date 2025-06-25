@@ -50,9 +50,16 @@ class Raspberry(BaseModel):
     ip_router: IPvAnyAddress
 
 
+class Intervalos(BaseModel):
+    intervalo_collectorA: int
+    intervalo_collectorS: int
+    intervalo_schedulerA: int
+    intervalo_schedulerS: int
+
 class Configuracion(BaseModel):
     controlador: Controlador
     raspberry: Raspberry
+    intervalos: Intervalos
 
 
 def cargar_configuracion(path: Optional[str] = None) -> Configuracion:

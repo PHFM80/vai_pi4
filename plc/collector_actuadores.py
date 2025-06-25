@@ -84,7 +84,8 @@ async def run():
                             ahora = datetime.now()
                             #print(f"[{ahora.strftime('%H:%M:%S')}] Cambio detectado y guardado para actuador {actuador.nombre} (id:{actuador.id}): {accion}")
 
-            await asyncio.sleep(60)
+            await asyncio.sleep(config.intervalos.intervalo_collectorA)
+
     except asyncio.CancelledError:
         logger.info("Finalizando collector_actuadores.")
         #print("[INFO] Finalizando collector_actuadores.")

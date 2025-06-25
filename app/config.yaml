@@ -33,3 +33,9 @@ raspberry:
   ip_wireguard: "10.0.0.1"
   ip_router: "192.168.1.1"
 
+
+intervalos:
+  intervalo_collectorA: 60       # en segundos (actuadores)
+  intervalo_collectorS: 31      # en segundos (sensores)
+  intervalo_schedulerA: 1100      # en segundos (actuadores)
+  intervalo_schedulerS: 600      # en segundos (sensores)
