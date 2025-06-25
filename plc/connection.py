@@ -1,0 +1,71 @@
+# plc\connection.py
+import snap7
+from snap7.type import Areas
+import logging
+
+logger = logging.getLogger(__name__)
+
+class LOGOConnection:
+    def __init__(self, ip: str):
+        self.ip = ip
+        self.client = snap7.client.Client()
+
+
+    def conectar(self) -> None:
+        try:
+            self.client.connect(self.ip, 0, 0)
+            if self.client.get_connected():
+                logger.info(f"Conectado a PLC en {self.ip}")
+                #print(f"Conectado a PLC en {self.ip}")
+            else:
+                logger.warning(f"No se pudo conectar a {self.ip}")
+                #print(f"No se pudo conectar a {self.ip}")
+        except Exception as e:
+            logger.error(f"[ERROR] Fallo conexión al PLC {self.ip}: {e}")
+            #print(f"[ERROR] Fallo conexión al PLC {self.ip}: {e}")
+
+    def desconectar(self) -> None:
+        try:
+            self.client.disconnect()
+            logger.info(f"Desconectado de PLC en {self.ip}")
+            #print(f"Desconectado de PLC en {self.ip}")
+        except Exception as e:
+            logger.error(f"[ERROR] Fallo al desconectar del PLC {self.ip}: {e}")
+            #print(f"[ERROR] Fallo al desconectar del PLC {self.ip}: {e}")
+
+    def _map_area(self, area: str):
+        # Mapear string area a Areas.* de snap7
+        area = area.upper()
+        if area in ("M", "MK"):
+            return Areas.MK
+        elif area == "PE":
+            return Areas.PE
+        elif area == "PA":
+            return Areas.PA
+        elif area == "DB":
+            return Areas.DB
+        else:
+            raise ValueError(f"Área inválida: {area}")
+
+    def read_bool(self, area: str, direccion: int, bit: int = 0) -> bool:
+        try:
+            area_snap7 = self._map_area(area)
+            resultado = self.client.read_area(area_snap7, 0, direccion, 1)
+            byte = resultado[0]
+            return bool((byte >> bit) & 1)
+        except Exception as e:
+            #print(f"[ERROR] Al leer marca {area}{direccion} bit {bit}: {e}")
+            return False
+
+    def write_bool(self, area: str, direccion: int, value: bool, bit: int = 0):
+        try:
+            area_snap7 = self._map_area(area)
+            byte_actual = self.client.read_area(area_snap7, 0, direccion, 1)[0]
+            if value:
+                byte_modificado = byte_actual | (1 << bit)
+            else:
+                byte_modificado = byte_actual & ~(1 << bit)
+            self.client.write_area(area_snap7, 0, direccion, bytes([byte_modificado]))
+        except Exception as e:
+            #print(f"[ERROR] No se pudo escribir en {area}{direccion} bit {bit}: {e}")
+            raise

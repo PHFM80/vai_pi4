@@ -16,3 +16,10 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
+# Base de datos local
+datos.db
+
+# Configuración específica de cada Pi
+config.yaml
+
+

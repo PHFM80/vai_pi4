@@ -1,0 +1,46 @@
+vai_pi4
+|
+|--api/
+|   |
+|   |-accionar_actuador_pi4.py
+|   |-alerta_to_servidor.py 
+|   |-escaner_de_marcas.py 
+|   |-leer_marca_m_api.py
+|   |-tiempo_real_api.py
+|   |-visualizacion_actuadores_bd_api.py 
+|   |-visualizacion_sensores_bd_api.py
+|
+|--app/
+|   |
+|   |-__init.py__
+|   |-config_reader.py
+|   |-config.yaml
+|   |-database.py
+|   |-
+|
+|--models/ 
+|   |
+|   |-actuadores.py 
+|   |-sensores.py
+|
+|--plc/ 
+|   |
+|   |-collector_actuadores.py 
+|   |-collector_sensores.py
+|   |-connection.py 
+|   |-guardar_eventos_actuador_utils.py
+|   |-marcas_utils.py 
+|  
+|--scheduler/
+|   |
+|   |-scheduler.py 
+|   |-envio_datos_sensores.py 
+|   |-envio_datos_actuadores.py 
+|
+|--vai_pi4/ (entorno virtual)
+|
+|-.gitignore
+|-datos.db 
+|-estructura.txt 
+|-main.py 
+|-requirements.txt 
