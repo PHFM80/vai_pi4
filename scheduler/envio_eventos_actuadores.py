@@ -11,7 +11,7 @@ from app.config_reader import cargar_configuracion
 # URL del servidor central (ajustar IP si es necesario)
 config = cargar_configuracion()
 ip_servidor = str(config.raspberry.ip_servidor)
-URL_SERVIDOR = f"http://{ip_servidor}:8000/datos-actuador-create/"
+URL_SERVIDOR = f"http://{ip_servidor}:8000/evento-actuador-create/"
 
 
 logger = logging.getLogger(__name__)
