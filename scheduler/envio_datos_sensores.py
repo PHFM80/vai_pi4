@@ -31,8 +31,9 @@ def obtener_lecturas_sin_enviar(db: Session):
 
 # URL del servidor central (modo desarrollo: notebook)
 config = cargar_configuracion()
-ip_controlador = str(config.controlador.ip)
-URL_SERVIDOR = f"http://{ip_controlador}:8000/datos-sensor-create/"
+ip_servidor = str(config.raspberry.ip_servidor)
+URL_SERVIDOR = f"http://{ip_servidor}:8000/datos-sensor-create/"
+
 
 
 logger = logging.getLogger(__name__)
