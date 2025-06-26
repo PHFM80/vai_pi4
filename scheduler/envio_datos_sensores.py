@@ -39,7 +39,7 @@ URL_SERVIDOR = f"http://{ip_servidor}:8000/datos-sensor-create/"
 logger = logging.getLogger(__name__)
 
 def def_envio_datos_sensores():
-    print (f"[DEBUG] Iniciando envío de datos de sensores al servidor...")
+    #print (f"[DEBUG] Iniciando envío de datos de sensores al servidor...")
     logger.info(" Iniciando envío de datos de sensores al servidor...")
     session: Session = SessionLocal()
 
@@ -66,7 +66,7 @@ def def_envio_datos_sensores():
                     exito = True
 
                 else:
-                    print (f"[DEBUG]⚠️ Error al enviar datos. Código: {response.status_code}. Respuesta recibida del servidor: {response.text}")
+                    #print (f"[DEBUG]⚠️ Error al enviar datos. Código: {response.status_code}. Respuesta recibida del servidor: {response.text}")
                     logger.warning(f"⚠️ Error al enviar datos. Código: {response.status_code}. Respuesta recibida del servidor: {response.text}")
             except requests.RequestException as e:
                 logger.error(f" Fallo en la conexión: {e}")

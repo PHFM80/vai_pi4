@@ -29,6 +29,6 @@ def iniciar_scheduler():
     )
 
     scheduler.start()
-    print("[DEBUG] Scheduler iniciado")
+    #print("[DEBUG] Scheduler iniciado")
 
     atexit.register(lambda: scheduler.shutdown())
