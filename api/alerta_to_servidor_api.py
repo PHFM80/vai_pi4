@@ -6,8 +6,9 @@ from app.config_reader import cargar_configuracion
 
 # Configurá esta URL con la IP o dominio correcto del servidor central
 config = cargar_configuracion()
-ip_controlador = str(config.controlador.ip)
-URL_ALERTA = f"http://{ip_controlador}:8000/alerta-from-controlador/"
+ip_servidor = str(config.raspberry.ip_servidor)
+URL_SERVIDOR = f"http://{ip_servidor}:8000/dalerta-from-controlador/"
+
 
 logger = logging.getLogger(__name__)
 
