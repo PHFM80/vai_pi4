@@ -48,7 +48,7 @@ class Raspberry(BaseModel):
     ip_wlan: IPvAnyAddress
     ip_wireguard: IPvAnyAddress
     ip_router: IPvAnyAddress
-
+    ip_servidor: IPvAnyAddress  
 
 class Intervalos(BaseModel):
     intervalo_collectorA: int
