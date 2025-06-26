@@ -16,14 +16,14 @@ def iniciar_scheduler():
 
     scheduler.add_job(
         def_envio_datos_sensores,
-        trigger=IntervalTrigger(minutes=intervalo_sensores),
+        trigger=IntervalTrigger(seconds=intervalo_sensores),
         id="envio_datos_sensores",
         replace_existing=True
     )
 
     scheduler.add_job( 
         def_envio_eventos_actuadores,
-        trigger=IntervalTrigger(minutes=intervalo_actuadores),
+        trigger=IntervalTrigger(seconds=intervalo_actuadores),
         id="envio_eventos_actuadores",
         replace_existing=True
     )
