@@ -55,7 +55,7 @@ def def_envio_datos_sensores():
 
         while intentos < max_intentos and not exito:
             try:
-                response = requests.post(URL_SERVIDOR, json=payload, timeout=10)
+                response = requests.post(URL_SERVIDOR, json=payload, timeout=30)
                 if response.status_code == 200:
                     logger.info(f" Datos enviados correctamente. Respuesta recibida del servidor: {response.json()}")
 
