@@ -70,7 +70,7 @@ def def_envio_datos_sensores():
                     logger.warning(f"⚠️ Error al enviar datos. Código: {response.status_code}. Respuesta recibida del servidor: {response.text}")
             except requests.RequestException as e:
                 logger.error(f" Fallo en la conexión: {e}")
-                time.sleep(10)  # espera antes de reintentar
+                time.sleep(30)  # espera antes de reintentar
             intentos += 1
 
         if not exito:
